@@ -1,10 +1,28 @@
-﻿# 종목데이터분석
-> TSV(Tab-separated values) 파일 처리기
+﻿# Contents Manager
 
-대신증권 HTS의 텍스트로 저장 기능으로 저장한 TSV(Tab-separated values) 파일을 적절하게 처리하여 투자에 도움을 주는 것을 목적으로 함.
+컨텐츠를 관리하는데 도움을 주는 프로그램.
 
-이 프로그램은 Windows PC용 클라이언트 프로그램이며, 데이터를 저장하는 중앙 서버 프로그램이 있어야 동작한다.
+```
+* 항목1
+    * 001 항목1-1
+        * file1.abc
+        * file2.abc
+    * 002 항목1-2
+        * file1.abc
+        * file2.abc
+    * 003 항목1-3
+        * file1.abc
+        * file2.abc
+* 항목2
+    * 001 항목2-1
+        * file1.abc
+        * file2.abc
+    * 002 항목2-2
+        * file1.abc
+        * file2.abc
+```
 
+귀찮으니 자세한 내용은 생략한다.
 
 ## Build
 
@@ -17,12 +35,12 @@
 Windows:
 
 ```
-Download setup file and execute it
+Download exe file and execute it
 ```
 
 ## Release History
 
-* 1.0
+* 1.0.0
     * 첫 릴리즈
 
 ## External Resources
@@ -34,5 +52,5 @@ Yotta
 
 Distributed under the GPLv3 license. See ``LICENSE`` for more information.
 
-[https://github.com/yottacho/stockdata](https://github.com/yottacho/stockdata)
+[https://github.com/yottacho/contentsmanager](https://github.com/yottacho/contentsmanager)
 
