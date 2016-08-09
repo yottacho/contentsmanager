@@ -277,11 +277,11 @@
             // 
             // btnManage
             // 
-            this.btnManage.Location = new System.Drawing.Point(726, 14);
+            this.btnManage.Location = new System.Drawing.Point(716, 14);
             this.btnManage.Name = "btnManage";
-            this.btnManage.Size = new System.Drawing.Size(75, 23);
+            this.btnManage.Size = new System.Drawing.Size(85, 23);
             this.btnManage.TabIndex = 5;
-            this.btnManage.Text = "Manager";
+            this.btnManage.Text = "Merge Tool";
             this.btnManage.UseVisualStyleBackColor = true;
             this.btnManage.Click += new System.EventHandler(this.btnManage_Click);
             // 

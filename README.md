@@ -1,27 +1,27 @@
 ﻿# Contents Manager
 
-컨텐츠 관리 프로그램
+시리즈 컨텐츠 관리 프로그램
 
 폴더에 아래 구조로 저장하는 컨텐츠를 관리한다.
 
 ```
 * 컨텐츠명1
-    * 001 컨텐츠명1-1
-        * file1.abc
-        * file2.abc
-    * 002 컨텐츠명1-2
-        * file1.abc
-        * file2.abc
-    * 003 컨텐츠명1-3
-        * file1.abc
-        * file2.abc
+  * 001 컨텐츠명1-1
+    * file1.abc
+    * file2.abc
+  * 002 컨텐츠명1-2
+    * file1.abc
+    * file2.abc
+  * 003 컨텐츠명1-3
+    * file1.abc
+    * file2.abc
 * 컨텐츠명2
-    * 001 컨텐츠명2-1
-        * file1.abc
-        * file2.abc
-    * 002 컨텐츠명2-2
-        * file1.abc
-        * file2.abc
+  * 001 컨텐츠명2-1
+    * file1.abc
+    * file2.abc
+  * 002 컨텐츠명2-2
+    * file1.abc
+    * file2.abc
 ```
 
 귀찮으니 자세한 내용은 생략한다.
@@ -36,6 +36,8 @@
 
 * 컨텐츠에 메모나 태그 달아서 관리
 * 주 컨텐츠 폴더를 여러 개 유지
+* 폴더 날짜 재정렬 (컨텐츠 파일의 가장 마지막 날짜로 컨텐츠 폴더 업데이트)
+* 번호매기기 안 된 폴더 표시
 
 ## Build
 
@@ -53,6 +55,9 @@ Download exe file and execute it
 
 ## Release History
 
+* 1.0.1
+    * 쓰레드에서 UI에 억세스하는 버그 수정
+    * 딕셔너리 개선
 * 1.0.0
     * 첫 릴리즈
 

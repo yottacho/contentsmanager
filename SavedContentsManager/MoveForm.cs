@@ -397,12 +397,11 @@ namespace SavedContentsManager
             listSourceDetail_Init(dirPathName);
 
             // 기존에 정의해 둔 이름이 있는지 체크
-            var cachedName = nameMappingCache.Where(x => x.Key.Equals(dirName)).SingleOrDefault();
-            if (cachedName.Key != null)
+            if (nameMappingCache.ContainsKey(dirName))
             {
                 // 기존에 정의한 이름이 있으면 이 이름을 우선 사용
-                Console.WriteLine("Target name set [" + cachedName.Value + "]");
-                dirName = cachedName.Value;
+                Console.WriteLine("Target name cached [" + nameMappingCache[dirName] + "]");
+                dirName = nameMappingCache[dirName];
             }
 
             // 타겟 중에서 같은 이름이 있는지 찾아서 선택
@@ -416,6 +415,7 @@ namespace SavedContentsManager
             else
             {
                 // 일치하는 이름이 없을 경우 선택 클리어
+                Console.WriteLine("일치하는 이름이 없음 (새 항목)");
                 listTarget.SelectedIndices.Clear();
                 if (listTarget.Items.Count > 0)
                     listTarget.TopItem = listTarget.Items[0];
@@ -446,6 +446,8 @@ namespace SavedContentsManager
         /// </summary>
         private string targetDirName = "";
         private string progressText = "";
+        private ListViewItem processDir = null;
+        private ListViewItem[] progressTarget = null;
         private bool workerRunning = false;
 
         /// <summary>
@@ -478,32 +480,38 @@ namespace SavedContentsManager
                 // 현재 선택한 소스 폴더명으로 새 폴더 생성
                 targetDirName = textTarget.Text + Path.DirectorySeparatorChar + listSource.SelectedItems[0].Text;
                 Console.WriteLine("New target dir : " + targetDirName);
+
+                // targetDirName 생성
+                Directory.CreateDirectory(targetDirName);
             }
             else
             {
                 targetDirName = listTarget.SelectedItems[0].Name;
 
-                // targetDirName 생성
-                Directory.CreateDirectory(targetDirName);
-
                 if (!listSource.SelectedItems[0].Text.Equals(listTarget.SelectedItems[0].Text))
                 {
+                    Console.WriteLine("Cache Set " + listSource.SelectedItems[0].Text + " = " + listTarget.SelectedItems[0].Text);
                     // 소스와 타겟 이름이 다르면 매핑캐시에 저장
                     nameMappingCache[listSource.SelectedItems[0].Text] = listTarget.SelectedItems[0].Text;
                 }
                 else
                 {
-                    // 소스와 타겟이 동일하면 매핑캐시에서 삭제
-                    var cachedName = nameMappingCache.Where(x => x.Key.Equals(listSource.SelectedItems[0].Text)).SingleOrDefault();
-                    if (cachedName.Key != null)
+                    // 소스와 타겟이 동일하면 소스를 매핑캐시에서 삭제
+                    if (nameMappingCache.ContainsKey(listSource.SelectedItems[0].Text))
                     {
-                        nameMappingCache.Remove(nameMappingCache[listSource.SelectedItems[0].Text]);
+                        Console.WriteLine("Cache Remove " + listSource.SelectedItems[0].Text);
+                        nameMappingCache.Remove(listSource.SelectedItems[0].Text);
                     }
                 }
                 nameMappingCache.Save(textTarget.Text, CACHE_FILE_NAME);
             }
 
             Console.WriteLine("btnProcessAll_Click Target dir : " + targetDirName);
+
+            // UI 컨트롤에 저장한 항목을 다른 메모리로 복제(다른 쓰레드에서 UI 컨트롤 억세스를 차단)
+            processDir = listSource.SelectedItems[0];
+            progressTarget = new ListViewItem[listTargetTodo.Items.Count];
+            listTargetTodo.Items.CopyTo(progressTarget, 0);
 
             // ---------------------
             BackgroundWorker bw = new BackgroundWorker();
@@ -527,7 +535,18 @@ namespace SavedContentsManager
             workerRunning = true;
 
             int directoryCount = 0;
-            foreach (ListViewItem item in listTargetTodo.Items)
+            Console.WriteLine("Count: " + progressTarget.Length);
+            int procIdx = 0;
+            int procTot = 0;
+
+            progressText = "Init ...";
+            worker.ReportProgress(0);
+            foreach (ListViewItem item in progressTarget)
+            {
+                procTot += new DirectoryInfo(item.Name).GetFiles().Length;
+            }
+
+            foreach (ListViewItem item in progressTarget)
             {
                 directoryCount++;
                 string targetName = targetDirName + Path.DirectorySeparatorChar + item.Text + " " + item.SubItems[1].Text;
@@ -541,20 +560,16 @@ namespace SavedContentsManager
                     DateTime srcTime = srcDir.LastWriteTime;
 
                     FileInfo[] files = srcDir.GetFiles();
-                    int procIdx = 0;
                     foreach (FileInfo f in files)
                     {
                         procIdx++;
                         Console.WriteLine("Move ... " + f.FullName);
 
-                        progressText = "[" + directoryCount + "/" + listTargetTodo.Items.Count + "] " +
+                        progressText = "[" + directoryCount + "/" + progressTarget.Length + "] " +
                             item.SubItems[1].Text + "\\" +
-                            f.Name + " (" + procIdx + "/" + files.Length + ")";
+                            f.Name + " (" + procIdx + "/" + procTot + ")";
 
-                        int m = (int)(((double)directoryCount / (double)listTargetTodo.Items.Count) * 100.0) / 10;
-                        int s = (int)((double)procIdx / (double)files.Length * 100.0) / 10;
-
-                        int p = (m * 10) + s;
+                        int p = (int)((double)procIdx / (double)procTot * 100.0);
                         if (p < 0)
                             p = 0;
                         if (p > 100)
@@ -569,6 +584,7 @@ namespace SavedContentsManager
                     DirectoryInfo tDir = new DirectoryInfo(targetName);
                     tDir.LastWriteTime = srcDir.LastWriteTime;
 
+                    // 소스 디렉터리 삭제
                     srcDir.Delete();
                 }
                 catch (Exception ee)
@@ -588,7 +604,6 @@ namespace SavedContentsManager
         /// <param name="e"></param>
         private void MoveProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            //e.ProgressPercentage
             txtStatus.Text = progressText;
             progressBar1.Value = e.ProgressPercentage;
         }
@@ -600,21 +615,24 @@ namespace SavedContentsManager
         /// <param name="e"></param>
         private void MoveAllWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            txtStatus.Text = listSource.SelectedItems[0].Text + " 이동 완료";
+            txtStatus.Text = processDir.Text + " 이동 완료";
             progressBar1.Value = 0;
             workerRunning = false;
+            progressTarget = null;
 
-            // 소스폴더 삭제
-            Console.WriteLine("Delete source: " + listSource.SelectedItems[0].Name);
+            // moveall 이후 껍데기만 남은 소스 디렉터리 삭제
+            Console.WriteLine("Delete source: " + processDir.Name);
             try
             {
-                Directory.Delete(listSource.SelectedItems[0].Name);
+                Directory.Delete(processDir.Name);
             }
             catch (Exception ee)
             {
-                MessageBox.Show("디렉터리를 삭제할 수 없습니다. [" + listSource.SelectedItems[0].Name + "]\n사유: " + ee.Message);
+                MessageBox.Show("디렉터리를 삭제할 수 없습니다. [" + processDir.Name + "]\n사유: " + ee.Message);
                 txtStatus.Text += "(폴더 삭제 실패)";
             }
+
+            processDir = null;
 
             // 소스폴더 리프레시
             listSource.Items.Clear();
@@ -652,10 +670,9 @@ namespace SavedContentsManager
             Console.WriteLine("Delete [" + srcItem.Name + "]");
 
             // 매핑캐시에 정의된 이름이 있으면 삭제
-            var cachedName = nameMappingCache.Where(x => x.Key.Equals(listSource.SelectedItems[0].Text)).SingleOrDefault();
-            if (cachedName.Key != null)
+            if (nameMappingCache.ContainsKey(listSource.SelectedItems[0].Text))
             {
-                nameMappingCache.Remove(nameMappingCache[listSource.SelectedItems[0].Text]);
+                nameMappingCache.Remove(listSource.SelectedItems[0].Text);
             }
 
             // 폴더 삭제
