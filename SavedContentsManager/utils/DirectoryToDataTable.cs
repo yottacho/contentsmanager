@@ -33,6 +33,7 @@ namespace SavedContentsManager.utils
             directoryInfo.Columns.Add("Last Updated", typeof(string));
             directoryInfo.Columns.Add("Sub Folders", typeof(int));
             directoryInfo.Columns.Add("Parent", typeof(string));
+            directoryInfo.Columns.Add("Check", typeof(int));
 
             DirectoryInfoView = new DataView(directoryInfo);
             DirectoryInfoView.Sort = "[Title Name] ASC";
@@ -56,7 +57,7 @@ namespace SavedContentsManager.utils
                 }
             }
 
-            DifferentCheck();
+            //DifferentCheck();
         }
 
         public void WriteCache()
@@ -115,13 +116,18 @@ namespace SavedContentsManager.utils
                 if (foundRows.Length == 0)
                 {
                     Console.WriteLine("New: " + dir.Name);
-                    int subDir = dir.GetDirectories().Length;
+                    //int subDir = dir.GetDirectories().Length;
+                    DetailDirectory detail = new DetailDirectory(dir.FullName);
+                    int subDir = detail.Directories.Count;
+                    int checkCount = detail.Directories.Where(item => !item.isPrefix).Count();
 
                     DataRow row = directoryInfo.NewRow();
                     row["Title Name"] = dir.Name;
                     row["Last Updated"] = lastDate;
                     row["Sub Folders"] = subDir;
                     row["Parent"] = parent;
+                    row["Check"] = checkCount;
+
                     directoryInfo.Rows.Add(row);
                 }
                 else
@@ -135,11 +141,15 @@ namespace SavedContentsManager.utils
                     if (!lastDate.Equals(foundRows[0]["Last Updated"]))
                     {
                         Console.WriteLine("Update: " + dir.Name);
-                        int subDir = dir.GetDirectories().Length;
+                        //int subDir = dir.GetDirectories().Length;
+                        DetailDirectory detail = new DetailDirectory(dir.FullName);
+                        int subDir = detail.Directories.Count;
+                        int checkCount = detail.Directories.Where(item => !item.isPrefix).Count();
 
                         foundRows[0].BeginEdit();
                         foundRows[0]["Last Updated"] = lastDate;
                         foundRows[0]["Sub Folders"] = subDir;
+                        foundRows[0]["Check"] = checkCount;
                         foundRows[0].EndEdit();
                     }
                 }

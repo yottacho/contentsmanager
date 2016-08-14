@@ -61,12 +61,19 @@ namespace SavedContentsManager
                 catch (Exception e)
                 {
                     MessageBox.Show("디렉터리에 접근할 수 없습니다.\n" + e.Message);
+                    contentsDirectory = null;
                     return;
                 }
 
                 dataGridTitles.DataSource = contentsDirectory.DirectoryInfoView;
                 dataGridTitles.Columns["Sub Folders"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
                 dataGridTitles.AutoResizeColumns();
+
+                // 캐시 파일이 있으면 변경분만 갱신하고 캐시 파일이 없으면 백그라운드에서 전체를 갱신 처리
+                if (contentsDirectory.DirectoryInfoView.Count > 0)
+                    contentsDirectory.DifferentCheck();
+                else
+                    btnRefreshAll_Click(null, null);
             }
         }
 

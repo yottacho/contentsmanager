@@ -35,6 +35,7 @@
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageFolder = new System.Windows.Forms.TabPage();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.btnRefreshAll = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
@@ -51,7 +52,6 @@
             this.txtTitle = new System.Windows.Forms.TextBox();
             this.listDetail = new System.Windows.Forms.ListView();
             this.btnManage = new System.Windows.Forms.Button();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.tabControl1.SuspendLayout();
             this.tabPageFolder.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridTitles)).BeginInit();
@@ -122,6 +122,13 @@
             this.tabPageFolder.TabIndex = 0;
             this.tabPageFolder.Text = "Titles";
             this.tabPageFolder.UseVisualStyleBackColor = true;
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(523, 10);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(100, 16);
+            this.progressBar1.TabIndex = 6;
             // 
             // btnRefresh
             // 
@@ -298,13 +305,6 @@
             this.btnManage.Text = "Merge Tool";
             this.btnManage.UseVisualStyleBackColor = true;
             this.btnManage.Click += new System.EventHandler(this.btnManage_Click);
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Location = new System.Drawing.Point(523, 10);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(100, 16);
-            this.progressBar1.TabIndex = 6;
             // 
             // SavedContentsManager
             // 
