@@ -8,9 +8,13 @@ using System.Threading.Tasks;
 
 namespace SavedContentsManager.utils
 {
+
     class DirectoryToDataTable
     {
         const string CACHE_FILE_NAME = "scm_cache.xml";
+        public delegate void ReportProgress(int p);
+        public ReportProgress reportProgressMethod;
+
         private string cacheFileName = null;
         private string sourceDirectory = null;
 
@@ -85,8 +89,25 @@ namespace SavedContentsManager.utils
             DirectoryInfo[] dirList = new DirectoryInfo(startDir).GetDirectories();
 
             // new or updated directory to cache
+            int total = dirList.Length;
+            int current = 0;
+            int progress = 0;
             foreach (DirectoryInfo dir in dirList)
             {
+                current++;
+                progress = (int)((double)current / (double)total * 100.0);
+                if (progress < 0)
+                    progress = 0;
+                if (progress > 100)
+                    progress = 100;
+
+                try
+                {
+                    if (reportProgressMethod != null)
+                        reportProgressMethod(progress);
+                }
+                catch (InvalidOperationException) { }
+
                 DateTime lastWriteTime = dir.LastWriteTime;
                 string lastDate = lastWriteTime.ToString("yyyy-MM-dd HH:mm:ss");
 

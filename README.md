@@ -55,6 +55,8 @@ Download exe file and execute it
 
 ## Release History
 
+* 1.0.3
+    * 전체 리프레시 작업을 백그라운드 처리로 변경
 * 1.0.2
     * 디렉터리 찾지 못할 경우 발생하는 오류 수정
 * 1.0.1

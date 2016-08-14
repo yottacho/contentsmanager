@@ -14,7 +14,8 @@ namespace SavedContentsManager
 {
     public partial class SavedContentsManager : Form
     {
-        private DirectoryToDataTable contentsDirectory = null;
+        private DirectoryToDataTable contentsDirectory;
+        BackgroundWorker bWorker;
 
         public SavedContentsManager()
         {
@@ -166,6 +167,13 @@ namespace SavedContentsManager
         /// <param name="e"></param>
         private void btnRefreshAll_Click(object sender, EventArgs e)
         {
+
+            if (bWorker != null && bWorker.IsBusy)
+            {
+                MessageBox.Show("리프레시 작업이 진행중입니다.");
+                return;
+            }
+
             if (contentsDirectory == null)
             {
                 dataGridTitles_Init();
@@ -173,13 +181,43 @@ namespace SavedContentsManager
             else
             {
                 txtSearch.Text = "";
-                contentsDirectory.Refresh();
+                progressBar1.Value = 0;
+                dataGridTitles.DataSource = null;
 
-                //dataGridTitles.DataSource = contentsDirectory.DirectoryInfoView;
-                dataGridTitles.AutoResizeColumns();
+                if (bWorker == null)
+                {
+                    bWorker = new BackgroundWorker();
+
+                    bWorker.DoWork += refreshProcess;
+                    bWorker.ProgressChanged += updateProgressBar;
+                    bWorker.RunWorkerCompleted += refreshProcessCompleted;
+                }
+
+                contentsDirectory.reportProgressMethod = bWorker.ReportProgress;
+                bWorker.WorkerReportsProgress = true;
+                bWorker.RunWorkerAsync();
             }
 
             Console.WriteLine("Refreshed.");
+        }
+
+        public void refreshProcess(object sender, DoWorkEventArgs e)
+        {
+            contentsDirectory.Refresh();
+        }
+
+        public void updateProgressBar(object sender, ProgressChangedEventArgs e)
+        {
+            progressBar1.Value = e.ProgressPercentage;
+        }
+
+        public void refreshProcessCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            contentsDirectory.reportProgressMethod = null;
+            progressBar1.Value = 100;
+
+            dataGridTitles.DataSource = contentsDirectory.DirectoryInfoView;
+            dataGridTitles.AutoResizeColumns();
         }
 
         /// <summary>

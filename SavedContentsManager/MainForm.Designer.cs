@@ -35,6 +35,7 @@
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageFolder = new System.Windows.Forms.TabPage();
+            this.btnRefresh = new System.Windows.Forms.Button();
             this.btnRefreshAll = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.txtSearch = new System.Windows.Forms.TextBox();
@@ -50,7 +51,7 @@
             this.txtTitle = new System.Windows.Forms.TextBox();
             this.listDetail = new System.Windows.Forms.ListView();
             this.btnManage = new System.Windows.Forms.Button();
-            this.btnRefresh = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.tabControl1.SuspendLayout();
             this.tabPageFolder.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridTitles)).BeginInit();
@@ -108,6 +109,7 @@
             // 
             // tabPageFolder
             // 
+            this.tabPageFolder.Controls.Add(this.progressBar1);
             this.tabPageFolder.Controls.Add(this.btnRefresh);
             this.tabPageFolder.Controls.Add(this.btnRefreshAll);
             this.tabPageFolder.Controls.Add(this.label2);
@@ -120,6 +122,16 @@
             this.tabPageFolder.TabIndex = 0;
             this.tabPageFolder.Text = "Titles";
             this.tabPageFolder.UseVisualStyleBackColor = true;
+            // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Location = new System.Drawing.Point(629, 6);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(75, 23);
+            this.btnRefresh.TabIndex = 4;
+            this.btnRefresh.Text = "Refresh";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // btnRefreshAll
             // 
@@ -287,15 +299,12 @@
             this.btnManage.UseVisualStyleBackColor = true;
             this.btnManage.Click += new System.EventHandler(this.btnManage_Click);
             // 
-            // btnRefresh
+            // progressBar1
             // 
-            this.btnRefresh.Location = new System.Drawing.Point(629, 6);
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(75, 23);
-            this.btnRefresh.TabIndex = 4;
-            this.btnRefresh.Text = "Refresh";
-            this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            this.progressBar1.Location = new System.Drawing.Point(523, 10);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(100, 16);
+            this.progressBar1.TabIndex = 6;
             // 
             // SavedContentsManager
             // 
@@ -348,6 +357,7 @@
         private System.Windows.Forms.Button btnOpenDetail;
         private System.Windows.Forms.Button btnManage;
         private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }
 
