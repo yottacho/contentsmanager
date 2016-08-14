@@ -119,7 +119,7 @@
             this.listSource.Location = new System.Drawing.Point(14, 68);
             this.listSource.MultiSelect = false;
             this.listSource.Name = "listSource";
-            this.listSource.Size = new System.Drawing.Size(428, 155);
+            this.listSource.Size = new System.Drawing.Size(428, 226);
             this.listSource.TabIndex = 4;
             this.listSource.UseCompatibleStateImageBehavior = false;
             this.listSource.View = System.Windows.Forms.View.Details;
@@ -130,10 +130,10 @@
             this.listSourceDetail.FullRowSelect = true;
             this.listSourceDetail.GridLines = true;
             this.listSourceDetail.HideSelection = false;
-            this.listSourceDetail.Location = new System.Drawing.Point(15, 229);
+            this.listSourceDetail.Location = new System.Drawing.Point(15, 300);
             this.listSourceDetail.MultiSelect = false;
             this.listSourceDetail.Name = "listSourceDetail";
-            this.listSourceDetail.Size = new System.Drawing.Size(428, 182);
+            this.listSourceDetail.Size = new System.Drawing.Size(428, 111);
             this.listSourceDetail.TabIndex = 5;
             this.listSourceDetail.UseCompatibleStateImageBehavior = false;
             this.listSourceDetail.View = System.Windows.Forms.View.Details;

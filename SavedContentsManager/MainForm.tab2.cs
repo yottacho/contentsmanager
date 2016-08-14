@@ -82,7 +82,7 @@ namespace SavedContentsManager
         {
             if (txtTitle.Text.Length > 0)
             {
-                System.Diagnostics.Process.Start("explorer.exe", fullPath);
+                System.Diagnostics.Process.Start("explorer.exe", "\"" + fullPath + "\"");
             }
         }
 
@@ -171,7 +171,7 @@ namespace SavedContentsManager
             string startName = fullPathName + Path.DirectorySeparatorChar + files[0].Name;
             Console.WriteLine("Start [" + startName + "]");
 
-            System.Diagnostics.Process.Start("explorer.exe", startName);
+            System.Diagnostics.Process.Start("explorer.exe", "\"" + startName + "\"");
         }
 
         /// <summary>

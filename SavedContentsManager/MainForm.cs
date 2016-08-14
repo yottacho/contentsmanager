@@ -51,7 +51,18 @@ namespace SavedContentsManager
         {
             if (comboContentsFolder.Text.Length > 0)
             {
-                contentsDirectory = new DirectoryToDataTable(comboContentsFolder.Text);
+                txtSearch.Text = "";
+
+                try
+                {
+                    contentsDirectory = new DirectoryToDataTable(comboContentsFolder.Text);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("디렉터리에 접근할 수 없습니다.\n" + e.Message);
+                    return;
+                }
+
                 dataGridTitles.DataSource = contentsDirectory.DirectoryInfoView;
                 dataGridTitles.Columns["Sub Folders"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
                 dataGridTitles.AutoResizeColumns();
@@ -105,7 +116,7 @@ namespace SavedContentsManager
         {
             if (comboContentsFolder.Text.Length > 0)
             {
-                System.Diagnostics.Process.Start("explorer.exe", comboContentsFolder.Text);
+                System.Diagnostics.Process.Start("explorer.exe", "\"" + comboContentsFolder.Text + "\"");
             }
         }
 
@@ -155,13 +166,41 @@ namespace SavedContentsManager
         /// <param name="e"></param>
         private void btnRefreshAll_Click(object sender, EventArgs e)
         {
-            contentsDirectory.Refresh();
+            if (contentsDirectory == null)
+            {
+                dataGridTitles_Init();
+            }
+            else
+            {
+                txtSearch.Text = "";
+                contentsDirectory.Refresh();
 
-            //dataGridTitles.DataSource = contentsDirectory.DirectoryInfoView;
-            dataGridTitles.AutoResizeColumns();
+                //dataGridTitles.DataSource = contentsDirectory.DirectoryInfoView;
+                dataGridTitles.AutoResizeColumns();
+            }
+
             Console.WriteLine("Refreshed.");
         }
 
+        /// <summary>
+        /// 변경내역만 다시 로드
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            if (contentsDirectory == null)
+            {
+                dataGridTitles_Init();
+            }
+            else
+            {
+                txtSearch.Text = "";
+                contentsDirectory.DifferentCheck();
+
+                dataGridTitles.AutoResizeColumns();
+            }
+        }
 
         /// <summary>
         /// 목록 더블클릭하면 상세보기로 이동
@@ -239,7 +278,7 @@ namespace SavedContentsManager
             new MoveForm(comboContentsFolder.Text).ShowDialog();
 
             // 변경내역을 적용하기 위해 데이터그리드를 리로드한다
-            dataGridTitles_Init();
+            btnRefresh_Click(sender, e);
         }
 
     }

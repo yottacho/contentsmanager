@@ -26,11 +26,18 @@ namespace SavedContentsManager
         {
             textTarget.Text = targetPath;
             nameMappingCache = new SerializableDictionary<string, string>();
-            nameMappingCache.Load(textTarget.Text, CACHE_FILE_NAME);
 
-            nameMappingCache["?"] = "$";
-            nameMappingCache.Save(textTarget.Text, CACHE_FILE_NAME);
+            try
+            {
+                nameMappingCache.Load(textTarget.Text, CACHE_FILE_NAME);
 
+                nameMappingCache["?"] = "$";
+                nameMappingCache.Save(textTarget.Text, CACHE_FILE_NAME);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("매핑 파일에 접근할 수 없습니다.\n" + e.Message);
+            }
 
             comboSourceFolder.Items.Clear();
             comboSourceFolder.Text = Configure.LastSelectedSourceFolder;
@@ -46,7 +53,7 @@ namespace SavedContentsManager
                 listSource_Init();
 
             listTarget_Init();
-        }
+            }
 
         /// <summary>
         /// 리스트 타이틀 생성
@@ -101,10 +108,18 @@ namespace SavedContentsManager
         /// </summary>
         private void listSource_Init()
         {
-            listSource.BeginUpdate();
-            listSource.Items.Clear();
 
-            DirectoryInfo[] dirList = new DirectoryInfo(comboSourceFolder.Text).GetDirectories();
+            DirectoryInfo[] dirList;
+            try
+            {
+                dirList = new DirectoryInfo(comboSourceFolder.Text).GetDirectories();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("소스 디렉터리에 접근할 수 없습니다.\n" + e.Message);
+                return;
+            }
+
             Array.Sort(dirList, (x, y) =>
             {
                 DirectoryInfo xx = x as DirectoryInfo;
@@ -114,6 +129,9 @@ namespace SavedContentsManager
                 // 최근등록일 역순
                 return yy.LastWriteTime.CompareTo(xx.LastWriteTime);
             });
+
+            listSource.BeginUpdate();
+            listSource.Items.Clear();
 
             foreach (DirectoryInfo dir in dirList)
             {
@@ -132,10 +150,17 @@ namespace SavedContentsManager
         /// </summary>
         private void listSourceDetail_Init(string path)
         {
-            listSourceDetail.BeginUpdate();
-            listSourceDetail.Items.Clear();
+            DirectoryInfo[] dirList;
+            try
+            {
+                dirList = new DirectoryInfo(path).GetDirectories();
+            }
+            catch (DirectoryNotFoundException)
+            {
+                listSourceDetail.Items.Clear();
+                return;
+            }
 
-            DirectoryInfo[] dirList = new DirectoryInfo(path).GetDirectories();
             Array.Sort(dirList, (x, y) =>
             {
                 DirectoryInfo xx = x as DirectoryInfo;
@@ -143,6 +168,9 @@ namespace SavedContentsManager
 
                 return xx.Name.CompareTo(yy.Name);
             });
+
+            listSourceDetail.BeginUpdate();
+            listSourceDetail.Items.Clear();
 
             foreach (DirectoryInfo dir in dirList)
             {
@@ -166,10 +194,19 @@ namespace SavedContentsManager
         /// </summary>
         private void listTarget_Init(string search = "")
         {
-            listTarget.BeginUpdate();
-            listTarget.Items.Clear();
+            textTargetSearch.Text = "";
 
-            DirectoryInfo[] dirList = new DirectoryInfo(textTarget.Text).GetDirectories("*" + search + "*");
+            DirectoryInfo[] dirList;
+            try
+            {
+                dirList = new DirectoryInfo(textTarget.Text).GetDirectories("*" + search + "*");
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("타겟 디렉터리에 접근할 수 없습니다.\n" + e.Message);
+                return;
+            }
+
             Array.Sort(dirList, (x, y) =>
             {
                 DirectoryInfo xx = x as DirectoryInfo;
@@ -177,6 +214,9 @@ namespace SavedContentsManager
 
                 return xx.Name.CompareTo(yy.Name);
             });
+
+            listTarget.BeginUpdate();
+            listTarget.Items.Clear();
 
             foreach (DirectoryInfo dir in dirList)
             {
@@ -196,7 +236,16 @@ namespace SavedContentsManager
         /// <param name="path"></param>
         private void listTargetDetail_Init(string path)
         {
-            DetailDirectory detail = new DetailDirectory(path);
+            DetailDirectory detail;
+            try
+            {
+                detail = new DetailDirectory(path);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                listTargetDetail.Items.Clear();
+                return;
+            }
 
             listTargetDetail.BeginUpdate();
             listTargetDetail.Items.Clear();
@@ -286,7 +335,7 @@ namespace SavedContentsManager
         {
             if (comboSourceFolder.Text.Length > 0)
             {
-                System.Diagnostics.Process.Start("explorer.exe", comboSourceFolder.Text);
+                System.Diagnostics.Process.Start("explorer.exe", "\"" + comboSourceFolder.Text + "\"");
             }
         }
 
@@ -300,7 +349,7 @@ namespace SavedContentsManager
             if (listSource.SelectedItems.Count < 1)
                 return;
 
-            System.Diagnostics.Process.Start("explorer.exe", listSource.SelectedItems[0].Name);
+            System.Diagnostics.Process.Start("explorer.exe", "\"" + listSource.SelectedItems[0].Name + "\"");
         }
 
         /// <summary>
@@ -326,7 +375,7 @@ namespace SavedContentsManager
         {
             if (textTarget.Text.Length > 0)
             {
-                System.Diagnostics.Process.Start("explorer.exe", textTarget.Text);
+                System.Diagnostics.Process.Start("explorer.exe", "\"" + textTarget.Text + "\"");
             }
         }
 
@@ -340,7 +389,7 @@ namespace SavedContentsManager
             if (listTarget.SelectedItems.Count < 1)
                 return;
 
-            System.Diagnostics.Process.Start("explorer.exe", listTarget.SelectedItems[0].Name);
+            System.Diagnostics.Process.Start("explorer.exe", "\"" + listTarget.SelectedItems[0].Name + "\"");
         }
 
         /// <summary>
@@ -405,12 +454,24 @@ namespace SavedContentsManager
             }
 
             // 타겟 중에서 같은 이름이 있는지 찾아서 선택
-            ListViewItem foundItem = listTarget.FindItemWithText(dirName, false, 0, false);
-            if (foundItem != null)
+            if (listTarget.Items.Count > 0)
             {
-                Console.WriteLine("일치하는 이름 발견");
-                foundItem.Selected = true;
-                listTarget.TopItem = foundItem;
+                ListViewItem foundItem = listTarget.FindItemWithText(dirName, false, 0, false);
+                if (foundItem != null)
+                {
+                    Console.WriteLine("일치하는 이름 발견");
+                    foundItem.Selected = true;
+                    listTarget.TopItem = foundItem;
+                }
+                else
+                {
+                    // 일치하는 이름이 없을 경우 선택 클리어
+                    Console.WriteLine("일치하는 이름이 없음 (새 항목)");
+                    listTarget.SelectedIndices.Clear();
+                    if (listTarget.Items.Count > 0)
+                        listTarget.TopItem = listTarget.Items[0];
+                    listTargetTodo_Init();
+                }
             }
             else
             {
@@ -482,7 +543,15 @@ namespace SavedContentsManager
                 Console.WriteLine("New target dir : " + targetDirName);
 
                 // targetDirName 생성
-                Directory.CreateDirectory(targetDirName);
+                try
+                {
+                    Directory.CreateDirectory(targetDirName);
+                }
+                catch (Exception ee)
+                {
+                    MessageBox.Show("디렉터리를 생성할 수 없습니다.\n" + ee.Message);
+                    return;
+                }
             }
             else
             {
@@ -721,7 +790,7 @@ namespace SavedContentsManager
             string startName = selectedName + Path.DirectorySeparatorChar + files[0].Name;
             Console.WriteLine("Start [" + startName + "]");
 
-            System.Diagnostics.Process.Start("explorer.exe", startName);
+            System.Diagnostics.Process.Start("explorer.exe", "\"" + startName + "\"");
         }
 
         private void btnUp_Click(object sender, EventArgs e)

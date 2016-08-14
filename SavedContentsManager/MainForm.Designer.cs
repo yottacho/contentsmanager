@@ -50,6 +50,7 @@
             this.txtTitle = new System.Windows.Forms.TextBox();
             this.listDetail = new System.Windows.Forms.ListView();
             this.btnManage = new System.Windows.Forms.Button();
+            this.btnRefresh = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPageFolder.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridTitles)).BeginInit();
@@ -107,6 +108,7 @@
             // 
             // tabPageFolder
             // 
+            this.tabPageFolder.Controls.Add(this.btnRefresh);
             this.tabPageFolder.Controls.Add(this.btnRefreshAll);
             this.tabPageFolder.Controls.Add(this.label2);
             this.tabPageFolder.Controls.Add(this.txtSearch);
@@ -124,7 +126,7 @@
             this.btnRefreshAll.Location = new System.Drawing.Point(710, 6);
             this.btnRefreshAll.Name = "btnRefreshAll";
             this.btnRefreshAll.Size = new System.Drawing.Size(75, 23);
-            this.btnRefreshAll.TabIndex = 4;
+            this.btnRefreshAll.TabIndex = 5;
             this.btnRefreshAll.Text = "Refresh All";
             this.btnRefreshAll.UseVisualStyleBackColor = true;
             this.btnRefreshAll.Click += new System.EventHandler(this.btnRefreshAll_Click);
@@ -285,6 +287,16 @@
             this.btnManage.UseVisualStyleBackColor = true;
             this.btnManage.Click += new System.EventHandler(this.btnManage_Click);
             // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Location = new System.Drawing.Point(629, 6);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(75, 23);
+            this.btnRefresh.TabIndex = 4;
+            this.btnRefresh.Text = "Refresh";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            // 
             // SavedContentsManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -335,6 +347,7 @@
         private System.Windows.Forms.Button btnRemapping;
         private System.Windows.Forms.Button btnOpenDetail;
         private System.Windows.Forms.Button btnManage;
+        private System.Windows.Forms.Button btnRefresh;
     }
 }
 

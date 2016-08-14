@@ -55,6 +55,8 @@ Download exe file and execute it
 
 ## Release History
 
+* 1.0.2
+    * 디렉터리 찾지 못할 경우 발생하는 오류 수정
 * 1.0.1
     * 쓰레드에서 UI에 억세스하는 버그 수정
     * 딕셔너리 개선
