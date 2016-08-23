@@ -53,6 +53,7 @@
             this.btnSourceSelOpen = new System.Windows.Forms.Button();
             this.btnTargetSelOpen = new System.Windows.Forms.Button();
             this.btnRefreshSource = new System.Windows.Forms.Button();
+            this.textTargetName = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnSourceOpen
@@ -299,11 +300,19 @@
             this.btnRefreshSource.UseVisualStyleBackColor = true;
             this.btnRefreshSource.Click += new System.EventHandler(this.btnRefreshSource_Click);
             // 
+            // textTargetName
+            // 
+            this.textTargetName.Location = new System.Drawing.Point(611, 417);
+            this.textTargetName.Name = "textTargetName";
+            this.textTargetName.Size = new System.Drawing.Size(347, 21);
+            this.textTargetName.TabIndex = 29;
+            // 
             // MoveForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(971, 480);
+            this.Controls.Add(this.textTargetName);
             this.Controls.Add(this.btnRefreshSource);
             this.Controls.Add(this.btnTargetSelOpen);
             this.Controls.Add(this.btnSourceSelOpen);
@@ -364,5 +373,6 @@
         private System.Windows.Forms.Button btnSourceSelOpen;
         private System.Windows.Forms.Button btnTargetSelOpen;
         private System.Windows.Forms.Button btnRefreshSource;
+        private System.Windows.Forms.TextBox textTargetName;
     }
 }

@@ -71,7 +71,7 @@ namespace SavedContentsManager
 
                 // 캐시 파일이 있으면 변경분만 갱신하고 캐시 파일이 없으면 백그라운드에서 전체를 갱신 처리
                 if (contentsDirectory.DirectoryInfoView.Count > 0)
-                    contentsDirectory.DifferentCheck();
+                    btnRefresh_Click(null, null);
                 else
                     btnRefreshAll_Click(null, null);
             }
@@ -234,6 +234,7 @@ namespace SavedContentsManager
         /// <param name="e"></param>
         private void btnRefresh_Click(object sender, EventArgs e)
         {
+            this.Cursor = Cursors.WaitCursor;
             if (contentsDirectory == null)
             {
                 dataGridTitles_Init();
@@ -245,6 +246,7 @@ namespace SavedContentsManager
 
                 dataGridTitles.AutoResizeColumns();
             }
+            this.Cursor = this.DefaultCursor;
         }
 
         /// <summary>

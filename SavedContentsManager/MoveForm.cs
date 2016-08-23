@@ -53,7 +53,7 @@ namespace SavedContentsManager
                 listSource_Init();
 
             listTarget_Init();
-            }
+        }
 
         /// <summary>
         /// 리스트 타이틀 생성
@@ -422,6 +422,13 @@ namespace SavedContentsManager
             listTarget.SelectedIndices.Clear();
             if (listTarget.Items.Count > 0)
                 listTarget.TopItem = listTarget.Items[0];
+
+            textTargetName.ReadOnly = false;
+            textTargetName.Text = "";
+
+            if (listSource.SelectedItems.Count > 0)
+                textTargetName.Text = listSource.SelectedItems[0].Text;
+
             listTargetTodo_Init();
         }
 
@@ -440,6 +447,9 @@ namespace SavedContentsManager
 
             string dirName = listSource.SelectedItems[0].Text;
             string dirPathName = listSource.SelectedItems[0].Name;
+
+            textTargetName.ReadOnly = false;
+            textTargetName.Text = "";
 
             Console.WriteLine("Source [" + dirName + "][" + dirPathName + "]");
 
@@ -462,6 +472,9 @@ namespace SavedContentsManager
                     Console.WriteLine("일치하는 이름 발견");
                     foundItem.Selected = true;
                     listTarget.TopItem = foundItem;
+
+                    textTargetName.Text = foundItem.Text;
+                    textTargetName.ReadOnly = true;
                 }
                 else
                 {
@@ -470,6 +483,8 @@ namespace SavedContentsManager
                     listTarget.SelectedIndices.Clear();
                     if (listTarget.Items.Count > 0)
                         listTarget.TopItem = listTarget.Items[0];
+
+                    textTargetName.Text = listSource.SelectedItems[0].Text;
                     listTargetTodo_Init();
                 }
             }
@@ -480,6 +495,8 @@ namespace SavedContentsManager
                 listTarget.SelectedIndices.Clear();
                 if (listTarget.Items.Count > 0)
                     listTarget.TopItem = listTarget.Items[0];
+
+                textTargetName.Text = listSource.SelectedItems[0].Text;
                 listTargetTodo_Init();
             }
         }
@@ -538,8 +555,16 @@ namespace SavedContentsManager
 
             if (listTarget.SelectedItems.Count < 1)
             {
+                if (textTargetName.Text.Length == 0)
+                {
+                    MessageBox.Show("폴더명이 없습니다.");
+                    return;
+                }
+
                 // 현재 선택한 소스 폴더명으로 새 폴더 생성
-                targetDirName = textTarget.Text + Path.DirectorySeparatorChar + listSource.SelectedItems[0].Text;
+                //targetDirName = textTarget.Text + Path.DirectorySeparatorChar + listSource.SelectedItems[0].Text;
+                // 지정한 이름으로 생성할 수 있도록 함
+                targetDirName = textTarget.Text + Path.DirectorySeparatorChar + textTargetName.Text;
                 Console.WriteLine("New target dir : " + targetDirName);
 
                 // targetDirName 생성
@@ -795,12 +820,42 @@ namespace SavedContentsManager
 
         private void btnUp_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("개발 중...");
+            if (listSourceDetail.SelectedIndices.Count == 0)
+                return;
+
+            int idx = listSourceDetail.SelectedIndices[0];
+            if (idx <= 0)
+                return;
+
+            ListViewItem item = listSourceDetail.SelectedItems[0];
+            listSourceDetail.Items.RemoveAt(idx);
+            idx--;
+            listSourceDetail.Items.Insert(idx, item);
+            listSourceDetail.SelectedIndices.Add(idx);
+            listSourceDetail.TopItem = listSourceDetail.SelectedItems[0];
+            listSourceDetail.SelectedItems[0].Focused = true;
+
+            listTargetTodo_Init();
         }
 
         private void btnDown_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("개발 중...");
+            if (listSourceDetail.SelectedIndices.Count == 0)
+                return;
+
+            int idx = listSourceDetail.SelectedIndices[0];
+            if ((idx + 1) >= listSourceDetail.Items.Count)
+                return;
+
+            ListViewItem item = listSourceDetail.SelectedItems[0];
+            listSourceDetail.Items.RemoveAt(idx);
+            idx++;
+            listSourceDetail.Items.Insert(idx, item);
+            listSourceDetail.SelectedIndices.Add(idx);
+            listSourceDetail.TopItem = listSourceDetail.SelectedItems[0];
+            listSourceDetail.SelectedItems[0].Focused = true;
+
+            listTargetTodo_Init();
         }
 
     }

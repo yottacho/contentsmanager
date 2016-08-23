@@ -108,6 +108,12 @@ namespace SavedContentsManager
             listDetail_Refresh();
             idx--;
             listDetail.SelectedIndices.Add(idx);
+
+            if (listDetail.SelectedItems.Count > 0)
+            {
+                listDetail.TopItem = listDetail.SelectedItems[0];
+                listDetail.SelectedItems[0].Focused = true;
+            }
         }
 
         /// <summary>
@@ -135,6 +141,12 @@ namespace SavedContentsManager
             listDetail_Refresh();
             idx++;
             listDetail.SelectedIndices.Add(idx);
+
+            if (listDetail.SelectedItems.Count > 0)
+            {
+                listDetail.TopItem = listDetail.SelectedItems[0];
+                listDetail.SelectedItems[0].Focused = true;
+            }
         }
 
 
