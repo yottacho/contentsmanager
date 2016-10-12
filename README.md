@@ -55,6 +55,8 @@ Download exe file and execute it
 
 ## Release History
 
+* 1.0.5
+    * 이동처리 후 선택항목 유지(마지막 선택한 항목에서 가장 가까운 것으로)
 * 1.0.4
     * 관리자폼 업다운 버튼 기능 추가, 변경점 체크 시 커서를 wait 으로 변경
 * 1.0.3

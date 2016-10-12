@@ -567,6 +567,14 @@ namespace SavedContentsManager
                 targetDirName = textTarget.Text + Path.DirectorySeparatorChar + textTargetName.Text;
                 Console.WriteLine("New target dir : " + targetDirName);
 
+                // 이름이 불일치하면 매핑캐시에 저장
+                if (!listSource.SelectedItems[0].Text.Equals(textTargetName.Text))
+                {
+                    Console.WriteLine("Cache Set " + listSource.SelectedItems[0].Text + " = " + listTarget.SelectedItems[0].Text);
+                    // 소스와 타겟 이름이 다르면 매핑캐시에 저장
+                    nameMappingCache[listSource.SelectedItems[0].Text] = textTargetName.Text;
+                }
+
                 // targetDirName 생성
                 try
                 {
@@ -728,6 +736,14 @@ namespace SavedContentsManager
 
             processDir = null;
 
+            int selectedItem = -1;
+            if (listSource.SelectedIndices.Count > 0)
+            {
+                selectedItem = listSource.SelectedIndices[0] - 1;
+                if (selectedItem < 0)
+                    selectedItem = 0;
+            }
+
             // 소스폴더 리프레시
             listSource.Items.Clear();
             listSource_Init();
@@ -738,6 +754,14 @@ namespace SavedContentsManager
             listTarget_Init();
             listTargetDetail.Items.Clear();
             listTargetTodo.Items.Clear();
+
+            if (selectedItem >= 0 && selectedItem < listSource.Items.Count)
+            {
+                listSource.SelectedIndices.Add(selectedItem);
+                // 선택항목 복원
+                listSource_SelectedIndexChanged(sender, e);
+            }
+
         }
 
 
