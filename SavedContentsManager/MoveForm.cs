@@ -527,6 +527,7 @@ namespace SavedContentsManager
         private ListViewItem processDir = null;
         private ListViewItem[] progressTarget = null;
         private bool workerRunning = false;
+        private int itemIndex = 0;
 
         /// <summary>
         /// 이동처리
@@ -614,6 +615,7 @@ namespace SavedContentsManager
             processDir = listSource.SelectedItems[0];
             progressTarget = new ListViewItem[listTargetTodo.Items.Count];
             listTargetTodo.Items.CopyTo(progressTarget, 0);
+            itemIndex = listSource.SelectedIndices[0];   // 현재 선택한 항목 위치 저장
 
             // ---------------------
             BackgroundWorker bw = new BackgroundWorker();
@@ -739,7 +741,15 @@ namespace SavedContentsManager
             int selectedItem = -1;
             if (listSource.SelectedIndices.Count > 0)
             {
-                selectedItem = listSource.SelectedIndices[0] - 1;
+                // 현재 목록에서 선택되어 있는 항목
+                selectedItem = listSource.SelectedIndices[0];
+
+                // 현재 선택된 항목이 이동한 항목보다 같거나 크면 선택항목을 1개 줄인다.
+                // 이동한 항목을 삭제하기 때문에 항목이 밀리는 것 방지
+                if (itemIndex >= selectedItem)
+                    selectedItem --;
+
+                // 인덱스가 0보다 작을 수는 없으므로 보정
                 if (selectedItem < 0)
                     selectedItem = 0;
             }
@@ -755,10 +765,11 @@ namespace SavedContentsManager
             listTargetDetail.Items.Clear();
             listTargetTodo.Items.Clear();
 
+            // 선택항목을 복원
             if (selectedItem >= 0 && selectedItem < listSource.Items.Count)
             {
                 listSource.SelectedIndices.Add(selectedItem);
-                // 선택항목 복원
+                listSource.TopItem = listSource.SelectedItems[0];  // 항목 스크롤
                 listSource_SelectedIndexChanged(sender, e);
             }
 

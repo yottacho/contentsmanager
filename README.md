@@ -55,6 +55,8 @@ Download exe file and execute it
 
 ## Release History
 
+* 1.0.6
+    * UI 마이너 개선(선택항목 유지처리, 스크롤 등)
 * 1.0.5
     * 이동처리 후 선택항목 유지(마지막 선택한 항목에서 가장 가까운 것으로)
 * 1.0.4
