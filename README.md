@@ -55,6 +55,8 @@ Download exe file and execute it
 
 ## Release History
 
+* 1.0.7
+    * UI 마이너 개선(스크롤 처리방법 개선)
 * 1.0.6
     * UI 마이너 개선(선택항목 유지처리, 스크롤 등)
 * 1.0.5

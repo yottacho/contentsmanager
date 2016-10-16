@@ -754,6 +754,12 @@ namespace SavedContentsManager
                     selectedItem = 0;
             }
 
+            string topItemName = null;
+            if (listSource.TopItem != null)
+            {
+                topItemName = listSource.TopItem.Name;
+            }
+
             // 소스폴더 리프레시
             listSource.Items.Clear();
             listSource_Init();
@@ -768,8 +774,19 @@ namespace SavedContentsManager
             // 선택항목을 복원
             if (selectedItem >= 0 && selectedItem < listSource.Items.Count)
             {
+                // 항목 스크롤
+                if (topItemName != null)
+                {
+                    foreach (ListViewItem item in listSource.Items)
+                    {
+                        if (topItemName.Equals(item.Name))
+                        {
+                            listSource.TopItem = item;
+                            break;
+                        }
+                    }
+                }
                 listSource.SelectedIndices.Add(selectedItem);
-                listSource.TopItem = listSource.SelectedItems[0];  // 항목 스크롤
                 listSource_SelectedIndexChanged(sender, e);
             }
 
