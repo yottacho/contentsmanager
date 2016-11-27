@@ -571,9 +571,11 @@ namespace SavedContentsManager
                 // 이름이 불일치하면 매핑캐시에 저장
                 if (!listSource.SelectedItems[0].Text.Equals(textTargetName.Text))
                 {
-                    Console.WriteLine("Cache Set " + listSource.SelectedItems[0].Text + " = " + listTarget.SelectedItems[0].Text);
+                    Console.WriteLine("Cache Set " + listSource.SelectedItems[0].Text + " = " + textTargetName.Text);
                     // 소스와 타겟 이름이 다르면 매핑캐시에 저장
                     nameMappingCache[listSource.SelectedItems[0].Text] = textTargetName.Text;
+                    // 저장
+                    nameMappingCache.Save(textTarget.Text, CACHE_FILE_NAME);
                 }
 
                 // targetDirName 생성
@@ -808,6 +810,13 @@ namespace SavedContentsManager
 
             ListViewItem srcItem = listSource.SelectedItems[0];
 
+            // 현재 목록에서 맨 위에 위치한 항목
+            string topItemName = null;
+            if (listSource.TopItem != null)
+            {
+                topItemName = listSource.TopItem.Name;
+            }
+
             // 삭제
             DialogResult result = MessageBox.Show("\"" + srcItem.Text + "\"를 삭제하시겠습니까?", "확인", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
             if (result != DialogResult.Yes)
@@ -837,6 +846,20 @@ namespace SavedContentsManager
             listSource_Init();
             listSourceDetail.Items.Clear();
             listTargetTodo.Items.Clear();
+
+            // 항목 스크롤
+            if (topItemName != null)
+            {
+                foreach (ListViewItem item in listSource.Items)
+                {
+                    if (topItemName.Equals(item.Name))
+                    {
+                        listSource.TopItem = item;
+                        break;
+                    }
+                }
+            }
+
         }
 
         /// <summary>

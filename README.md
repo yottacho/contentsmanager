@@ -55,6 +55,9 @@ Download exe file and execute it
 
 ## Release History
 
+* 1.0.8
+    * UI 마이너 개선(폴더 삭제시 스크롤 항목 유지)
+    * [Bug] 이름 변경해서 이동 시 오류발생 및 매핑이 저장 안되는 이슈 해결
 * 1.0.7
     * UI 마이너 개선(스크롤 처리방법 개선)
 * 1.0.6
