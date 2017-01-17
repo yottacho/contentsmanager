@@ -499,6 +499,15 @@ namespace SavedContentsManager
                 textTargetName.Text = listSource.SelectedItems[0].Text;
                 listTargetTodo_Init();
             }
+
+            listTargetDetail.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            if (listTargetDetail.Columns[1].Width < (16 * 15))
+                listTargetDetail.Columns[1].Width = 16 * 15;
+
+            listTargetTodo.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            if (listTargetTodo.Columns[1].Width < (16 * 15))
+                listTargetTodo.Columns[1].Width = 16 * 15;
+
         }
 
         /// <summary>
@@ -738,29 +747,39 @@ namespace SavedContentsManager
                 txtStatus.Text += "(폴더 삭제 실패)";
             }
 
-            processDir = null;
-
             int selectedItem = -1;
             if (listSource.SelectedIndices.Count > 0)
             {
                 // 현재 목록에서 선택되어 있는 항목
                 selectedItem = listSource.SelectedIndices[0];
 
-                // 현재 선택된 항목이 이동한 항목보다 같거나 크면 선택항목을 1개 줄인다.
-                // 이동한 항목을 삭제하기 때문에 항목이 밀리는 것 방지
-                if (itemIndex >= selectedItem)
-                    selectedItem --;
+                // 현재 선택된 항목이 이동한 항목과 같다면 선택된 항목을 1개 줄인다.
+                if (itemIndex == selectedItem)
+                    selectedItem--;
 
                 // 인덱스가 0보다 작을 수는 없으므로 보정
                 if (selectedItem < 0)
                     selectedItem = 0;
             }
 
+            // 현재 리스트의 최상위 항목 저장
             string topItemName = null;
             if (listSource.TopItem != null)
             {
                 topItemName = listSource.TopItem.Name;
+                // 최상위 항목이 이동한 항목이었을 경우... (TopItem이 삭제되는 경우)
+                if (topItemName.Equals(processDir.Text))
+                {
+                    foreach (ListViewItem item in listSource.Items)
+                    {
+                        if (item.Name.Equals(processDir.Text))
+                            break;
+                        topItemName = item.Name;
+                    }
+                }
             }
+
+            processDir = null;
 
             // 소스폴더 리프레시
             listSource.Items.Clear();
@@ -773,21 +792,22 @@ namespace SavedContentsManager
             listTargetDetail.Items.Clear();
             listTargetTodo.Items.Clear();
 
+            // 항목 스크롤 복원
+            if (topItemName != null)
+            {
+                foreach (ListViewItem item in listSource.Items)
+                {
+                    if (topItemName.Equals(item.Name))
+                    {
+                        listSource.TopItem = item;
+                        break;
+                    }
+                }
+            }
+
             // 선택항목을 복원
             if (selectedItem >= 0 && selectedItem < listSource.Items.Count)
             {
-                // 항목 스크롤
-                if (topItemName != null)
-                {
-                    foreach (ListViewItem item in listSource.Items)
-                    {
-                        if (topItemName.Equals(item.Name))
-                        {
-                            listSource.TopItem = item;
-                            break;
-                        }
-                    }
-                }
                 listSource.SelectedIndices.Add(selectedItem);
                 listSource_SelectedIndexChanged(sender, e);
             }
