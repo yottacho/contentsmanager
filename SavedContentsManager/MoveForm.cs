@@ -753,8 +753,8 @@ namespace SavedContentsManager
                 // 현재 목록에서 선택되어 있는 항목
                 selectedItem = listSource.SelectedIndices[0];
 
-                // 현재 선택된 항목이 이동한 항목과 같다면 선택된 항목을 1개 줄인다.
-                if (itemIndex == selectedItem)
+                // 현재 선택된 항목이 이동한 항목과 같거나 크면 선택된 항목을 1개 줄인다.
+                if (selectedItem >= itemIndex)
                     selectedItem--;
 
                 // 인덱스가 0보다 작을 수는 없으므로 보정
@@ -767,16 +767,6 @@ namespace SavedContentsManager
             if (listSource.TopItem != null)
             {
                 topItemName = listSource.TopItem.Name;
-                // 최상위 항목이 이동한 항목이었을 경우... (TopItem이 삭제되는 경우)
-                if (topItemName.Equals(processDir.Text))
-                {
-                    foreach (ListViewItem item in listSource.Items)
-                    {
-                        if (item.Name.Equals(processDir.Text))
-                            break;
-                        topItemName = item.Name;
-                    }
-                }
             }
 
             processDir = null;
@@ -792,24 +782,33 @@ namespace SavedContentsManager
             listTargetDetail.Items.Clear();
             listTargetTodo.Items.Clear();
 
-            // 항목 스크롤 복원
-            if (topItemName != null)
-            {
-                foreach (ListViewItem item in listSource.Items)
-                {
-                    if (topItemName.Equals(item.Name))
-                    {
-                        listSource.TopItem = item;
-                        break;
-                    }
-                }
-            }
-
             // 선택항목을 복원
             if (selectedItem >= 0 && selectedItem < listSource.Items.Count)
             {
                 listSource.SelectedIndices.Add(selectedItem);
                 listSource_SelectedIndexChanged(sender, e);
+            }
+
+            // 항목 스크롤 복원
+            if (topItemName != null)
+            {
+                bool topSet = false;
+                foreach (ListViewItem item in listSource.Items)
+                {
+                    if (topItemName.Equals(item.Name))
+                    {
+                        listSource.TopItem = item;
+                        topSet = true;
+                        break;
+                    }
+                }
+
+                // TopItem이 없는 경우...
+                if (!topSet && listSource.SelectedItems.Count > 0)
+                {
+                    // selectedItem 에 해당하는 항목을 최상위로
+                    listSource.TopItem = listSource.SelectedItems[0];
+                }
             }
 
         }

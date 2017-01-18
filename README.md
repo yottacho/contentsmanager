@@ -55,6 +55,8 @@ Download exe file and execute it
 
 ## Release History
 
+* 1.0.10
+    * 한동안 못잡고 있었던 스크롤 버그를 드디어 수정한 것 같은데 자신이 없다
 * 1.0.9
     * UI 조금 개선
 * 1.0.8
