@@ -478,16 +478,39 @@ namespace SavedContentsManager
                 }
                 else
                 {
-                    // 일치하는 이름이 없을 경우 선택 클리어
-                    Console.WriteLine("일치하는 이름이 없음 (새 항목)");
-                    listTarget.SelectedIndices.Clear();
-                    if (listTarget.Items.Count > 0)
-                        listTarget.TopItem = listTarget.Items[0];
+                    bool f = false;
+                    int nmIdx = dirName.LastIndexOf(" ");
+                    if (nmIdx > 0)
+                    {
+                        dirName = dirName.Substring(0, nmIdx);
+                        foundItem = listTarget.FindItemWithText(dirName, false, 0, false);
+                        if (foundItem != null)
+                        {
+                            Console.WriteLine("일부 일치하는 이름 발견");
+                            foundItem.Selected = true;
+                            listTarget.TopItem = foundItem;
 
-                    textTargetName.Text = listSource.SelectedItems[0].Text;
-                    listTargetTodo_Init();
+                            textTargetName.Text = foundItem.Text;
+                            textTargetName.ReadOnly = true;
+
+                            f = true;
+                        }
+                    }
+
+                    if (!f)
+                    {
+                        // 일치하는 이름이 없을 경우 선택 클리어
+                        Console.WriteLine("일치하는 이름이 없음 (새 항목)");
+                        listTarget.SelectedIndices.Clear();
+                        if (listTarget.Items.Count > 0)
+                            listTarget.TopItem = listTarget.Items[0];
+
+                        textTargetName.Text = listSource.SelectedItems[0].Text;
+                        listTargetTodo_Init();
+                    }
                 }
             }
+            // 타겟이 하나도 없을 경우...
             else
             {
                 // 일치하는 이름이 없을 경우 선택 클리어
@@ -551,16 +574,49 @@ namespace SavedContentsManager
                 return;
             }
 
-            if (listTargetTodo.Items.Count < 1)
-            {
-                MessageBox.Show("처리할 대상이 없습니다.");
-                return;
-            }
-
             if (listSource.SelectedItems.Count < 1)
             {
                 MessageBox.Show("소스가 선택되지 않았습니다.");
                 return;
+            }
+
+            if (listTargetTodo.Items.Count < 1)
+            {
+                if (MessageBox.Show("처리할 대상이 없습니다. 생성해서 이동할까요?", "선택", MessageBoxButtons.YesNo) == DialogResult.No)
+                {
+                    return;
+                }
+
+                // source 폴더를 sub folder에 밀어넣음
+                ListViewItem srcItem = listSource.SelectedItems[0];
+
+                // 최종번호 가져와서 최종번호 이후로 처리
+                int startIndex = 0;
+                foreach (ListViewItem targetItem in listTargetDetail.Items)
+                {
+                    int i;
+                    if (targetItem.Text.Length > 0 && int.TryParse(targetItem.Text, out i))
+                    {
+                        startIndex = i;
+                    }
+                }
+
+                listTargetTodo.BeginUpdate();
+                startIndex++;
+
+                // srcItem.Name : full path
+                // srcItem.Text : directory name
+                string no = string.Format("{0:D3}", startIndex);
+                ListViewItem item = new ListViewItem(no);
+                item.Name = srcItem.Name; // move from
+                item.SubItems.Add(srcItem.Text);
+                item.SubItems.Add(srcItem.SubItems[1]);
+
+                //MessageBox.Show("Name:" + srcItem.Name + "\nText:" + srcItem.Text);
+
+                listTargetTodo.Items.Add(item);
+
+                listTargetTodo.EndUpdate();
             }
 
             if (listTarget.SelectedItems.Count < 1)
@@ -739,7 +795,8 @@ namespace SavedContentsManager
             Console.WriteLine("Delete source: " + processDir.Name);
             try
             {
-                Directory.Delete(processDir.Name);
+                if (Directory.Exists(processDir.Name))
+                    Directory.Delete(processDir.Name);
             }
             catch (Exception ee)
             {
@@ -836,6 +893,21 @@ namespace SavedContentsManager
                 topItemName = listSource.TopItem.Name;
             }
 
+            int selectedItem = -1;
+            if (listSource.SelectedIndices.Count > 0)
+            {
+                // 현재 목록에서 선택되어 있는 항목
+                selectedItem = listSource.SelectedIndices[0];
+
+                // 현재 선택된 항목이 이동한 항목과 같거나 크면 선택된 항목을 1개 줄인다.
+                if (selectedItem >= itemIndex)
+                    selectedItem--;
+
+                // 인덱스가 0보다 작을 수는 없으므로 보정
+                if (selectedItem < 0)
+                    selectedItem = 0;
+            }
+
             // 삭제
             DialogResult result = MessageBox.Show("\"" + srcItem.Text + "\"를 삭제하시겠습니까?", "확인", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
             if (result != DialogResult.Yes)
@@ -865,6 +937,13 @@ namespace SavedContentsManager
             listSource_Init();
             listSourceDetail.Items.Clear();
             listTargetTodo.Items.Clear();
+
+            // 선택항목을 복원
+            if (selectedItem >= 0 && selectedItem < listSource.Items.Count)
+            {
+                listSource.SelectedIndices.Add(selectedItem);
+                listSource_SelectedIndexChanged(sender, e);
+            }
 
             // 항목 스크롤
             if (topItemName != null)
