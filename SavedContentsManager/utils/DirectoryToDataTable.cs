@@ -112,7 +112,8 @@ namespace SavedContentsManager.utils
                 DateTime lastWriteTime = dir.LastWriteTime;
                 string lastDate = lastWriteTime.ToString("yyyy-MM-dd HH:mm:ss");
 
-                DataRow[] foundRows = directoryInfo.Select("[Title Name] = '" + dir.Name + "'");
+                string dirName = dir.Name.Replace("'", "''");
+                DataRow[] foundRows = directoryInfo.Select("[Title Name] = '" + dirName + "'");
                 if (foundRows.Length == 0)
                 {
                     Console.WriteLine("New: " + dir.Name);

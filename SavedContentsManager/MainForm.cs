@@ -138,7 +138,8 @@ namespace SavedContentsManager
             //Console.WriteLine(txtSearch.Text);
             if (contentsDirectory != null)
             {
-                contentsDirectory.DirectoryInfoView.RowFilter = "[Title Name] LIKE '%" + txtSearch.Text + "%'";
+                string srchStr = txtSearch.Text.Replace("'", "''");
+                contentsDirectory.DirectoryInfoView.RowFilter = "[Title Name] LIKE '%" + srchStr + "%'";
             }
         }
 

@@ -55,6 +55,8 @@ Download exe file and execute it
 
 ## Release History
 
+* 1.0.13
+    * 이름 처리시 SQL Injection(') 관련 버그 수정
 * 1.0.12
     * 이름 일부 일치할 경우 옵션을 구현해봤다
 * 1.0.11
