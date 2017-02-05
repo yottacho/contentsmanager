@@ -37,10 +37,21 @@ namespace SavedContentsManager
             Application.Idle -= initialize;
 
             comboContentsFolder.Items.Clear();
+            comboContentsFolder.Items.AddRange(Configure.getContentsHistory());
             comboContentsFolder.Text = Configure.LastSelectedContentsFolder;
 
             tabControl1.SelectedIndex = 0;
             txtSearch.Focus();
+
+            dataGridTitles_Init();
+        }
+
+        private void comboContentsFolder_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //MessageBox.Show("선택한 폴더명: " + comboContentsFolder.Text);
+
+            //comboContentsFolder.Text = folderBrowserDialog.SelectedPath;
+            Configure.LastSelectedContentsFolder = comboContentsFolder.Text;
 
             dataGridTitles_Init();
         }
@@ -95,6 +106,9 @@ namespace SavedContentsManager
                 comboContentsFolder.Text = folderBrowserDialog.SelectedPath;
                 Configure.LastSelectedContentsFolder = folderBrowserDialog.SelectedPath;
 
+                comboContentsFolder.Items.Clear();
+                comboContentsFolder.Items.AddRange(Configure.getContentsHistory());
+
                 dataGridTitles_Init();
             }
         }
@@ -109,6 +123,9 @@ namespace SavedContentsManager
             if (e.KeyChar == (char)Keys.Enter)
             {
                 Configure.LastSelectedContentsFolder = comboContentsFolder.Text;
+
+                comboContentsFolder.Items.Clear();
+                comboContentsFolder.Items.AddRange(Configure.getContentsHistory());
 
                 dataGridTitles_Init();
                 e.Handled = true;

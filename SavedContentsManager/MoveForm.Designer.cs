@@ -125,6 +125,7 @@
             this.listSource.UseCompatibleStateImageBehavior = false;
             this.listSource.View = System.Windows.Forms.View.Details;
             this.listSource.SelectedIndexChanged += new System.EventHandler(this.listSource_SelectedIndexChanged);
+            this.listSource.DoubleClick += new System.EventHandler(this.listSource_DoubleClick);
             // 
             // listSourceDetail
             // 
@@ -166,6 +167,7 @@
             this.listTargetDetail.TabIndex = 12;
             this.listTargetDetail.UseCompatibleStateImageBehavior = false;
             this.listTargetDetail.View = System.Windows.Forms.View.Details;
+            this.listTargetDetail.DoubleClick += new System.EventHandler(this.listTargetDetail_DoubleClick);
             // 
             // listTargetTodo
             // 

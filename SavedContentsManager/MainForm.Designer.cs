@@ -74,6 +74,7 @@
             this.comboContentsFolder.Name = "comboContentsFolder";
             this.comboContentsFolder.Size = new System.Drawing.Size(334, 20);
             this.comboContentsFolder.TabIndex = 2;
+            this.comboContentsFolder.SelectedIndexChanged += new System.EventHandler(this.comboContentsFolder_SelectedIndexChanged);
             this.comboContentsFolder.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.comboContentsFolder_KeyPress);
             // 
             // btnBrowse

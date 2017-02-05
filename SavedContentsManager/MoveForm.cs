@@ -991,6 +991,33 @@ namespace SavedContentsManager
             System.Diagnostics.Process.Start("explorer.exe", "\"" + startName + "\"");
         }
 
+        private void listSource_DoubleClick(object sender, EventArgs e)
+        {
+            if (listSource.SelectedItems.Count == 0)
+                return;
+
+            string selectedName = listSource.SelectedItems[0].Name;
+            Console.WriteLine("Full name [" + selectedName + "]");
+
+            FileInfo[] files = new DirectoryInfo(selectedName).GetFiles();
+            Array.Sort(files, (x, y) =>
+            {
+                FileInfo xx = x as FileInfo;
+                FileInfo yy = y as FileInfo;
+
+                return xx.Name.CompareTo(yy.Name);
+            });
+
+            if (files.Length <= 0)
+                return;
+
+            string startName = selectedName + Path.DirectorySeparatorChar + files[0].Name;
+            Console.WriteLine("Start [" + startName + "]");
+
+            System.Diagnostics.Process.Start("explorer.exe", "\"" + startName + "\"");
+        }
+
+
         private void btnUp_Click(object sender, EventArgs e)
         {
             if (listSourceDetail.SelectedIndices.Count == 0)
@@ -1031,5 +1058,30 @@ namespace SavedContentsManager
             listTargetTodo_Init();
         }
 
+        private void listTargetDetail_DoubleClick(object sender, EventArgs e)
+        {
+            if (listTarget.SelectedItems.Count == 0)
+                return;
+
+            string selectedName = listTarget.SelectedItems[0].Name + Path.DirectorySeparatorChar + listTargetDetail.SelectedItems[0].Name;
+            Console.WriteLine("Full name [" + selectedName + "]");
+
+            FileInfo[] files = new DirectoryInfo(selectedName).GetFiles();
+            Array.Sort(files, (x, y) =>
+            {
+                FileInfo xx = x as FileInfo;
+                FileInfo yy = y as FileInfo;
+
+                return xx.Name.CompareTo(yy.Name);
+            });
+
+            if (files.Length <= 0)
+                return;
+
+            string startName = selectedName + Path.DirectorySeparatorChar + files[0].Name;
+            Console.WriteLine("Start [" + startName + "]");
+
+            System.Diagnostics.Process.Start("explorer.exe", "\"" + startName + "\"");
+        }
     }
 }
