@@ -54,6 +54,10 @@ Download exe file and execute it
 
 ## Release History
 
+* 1.1.3
+    * 항목 스크롤 개선
+* 1.1.2
+    * 늘 그렇듯 사소한 UI 변경
 * 1.1.1
     * 컨텐츠폴더 선택 히스토리 구현
     * moveform 더블클릭시 액션 추가

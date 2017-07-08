@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -20,6 +21,9 @@ namespace SavedContentsManager
         public SavedContentsManager()
         {
             InitializeComponent();
+            typeof(DataGridView).InvokeMember("DoubleBuffered",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty,
+                null, dataGridTitles, new object[] { true });
 
             // 타이틀에 버전명 추가
             this.Text += " - " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();

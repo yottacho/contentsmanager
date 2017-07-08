@@ -318,6 +318,7 @@
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.comboContentsFolder);
             this.Controls.Add(this.label1);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "SavedContentsManager";

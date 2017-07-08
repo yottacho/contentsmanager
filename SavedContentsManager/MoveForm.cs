@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -20,6 +21,17 @@ namespace SavedContentsManager
         private MoveForm()
         {
             InitializeComponent();
+            /*
+            typeof(ListView).InvokeMember("DoubleBuffered",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty,
+                null, listSource, new object[] { true });
+            typeof(ListView).InvokeMember("DoubleBuffered",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty,
+                null, listTarget, new object[] { true });
+            typeof(ListView).InvokeMember("DoubleBuffered",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty,
+                null, listTargetDetail, new object[] { true });
+            */
         }
 
         public MoveForm(string targetPath) : this()
@@ -61,6 +73,7 @@ namespace SavedContentsManager
         /// <param name="list"></param>
         private void list_TitleInit(ListView list)
         {
+            list.BeginUpdate();
             list.Columns.Clear();
             ColumnHeader colHeader = new ColumnHeader
             {
@@ -74,6 +87,7 @@ namespace SavedContentsManager
                 Width = 8 * 15
             };
             list.Columns.Add(colHeader);
+            list.EndUpdate();
         }
 
         /// <summary>
@@ -82,6 +96,7 @@ namespace SavedContentsManager
         /// <param name="list"></param>
         private void list_TitleDetailInit(ListView list)
         {
+            list.BeginUpdate();
             list.Columns.Clear();
             ColumnHeader colHeader = new ColumnHeader
             {
@@ -101,6 +116,7 @@ namespace SavedContentsManager
                 Width = 8 * 15
             };
             list.Columns.Add(colHeader);
+            list.EndUpdate();
         }
 
         /// <summary>
@@ -684,6 +700,7 @@ namespace SavedContentsManager
             listTargetTodo.Items.CopyTo(progressTarget, 0);
             itemIndex = listSource.SelectedIndices[0];   // 현재 선택한 항목 위치 저장
 
+            btnProcessAll.Enabled = false;
             // ---------------------
             BackgroundWorker bw = new BackgroundWorker();
             bw.DoWork += allMoveProcess;
@@ -791,6 +808,8 @@ namespace SavedContentsManager
             workerRunning = false;
             progressTarget = null;
 
+            btnProcessAll.Enabled = true;
+
             // moveall 이후 껍데기만 남은 소스 디렉터리 삭제
             Console.WriteLine("Delete source: " + processDir.Name);
             try
@@ -819,13 +838,6 @@ namespace SavedContentsManager
                     selectedItem = 0;
             }
 
-            // 현재 리스트의 최상위 항목 저장
-            string topItemName = null;
-            if (listSource.TopItem != null)
-            {
-                topItemName = listSource.TopItem.Name;
-            }
-
             processDir = null;
 
             // 소스폴더 리프레시
@@ -846,28 +858,7 @@ namespace SavedContentsManager
                 listSource_SelectedIndexChanged(sender, e);
             }
 
-            // 항목 스크롤 복원
-            if (topItemName != null)
-            {
-                bool topSet = false;
-                foreach (ListViewItem item in listSource.Items)
-                {
-                    if (topItemName.Equals(item.Name))
-                    {
-                        listSource.TopItem = item;
-                        topSet = true;
-                        break;
-                    }
-                }
-
-                // TopItem이 없는 경우...
-                if (!topSet && listSource.SelectedItems.Count > 0)
-                {
-                    // selectedItem 에 해당하는 항목을 최상위로
-                    listSource.TopItem = listSource.SelectedItems[0];
-                }
-            }
-
+            _listSource_SetTopItem();
         }
 
 
@@ -886,22 +877,12 @@ namespace SavedContentsManager
 
             ListViewItem srcItem = listSource.SelectedItems[0];
 
-            // 현재 목록에서 맨 위에 위치한 항목
-            string topItemName = null;
-            if (listSource.TopItem != null)
-            {
-                topItemName = listSource.TopItem.Name;
-            }
-
             int selectedItem = -1;
             if (listSource.SelectedIndices.Count > 0)
             {
                 // 현재 목록에서 선택되어 있는 항목
                 selectedItem = listSource.SelectedIndices[0];
-
-                // 현재 선택된 항목이 이동한 항목과 같거나 크면 선택된 항목을 1개 줄인다.
-                if (selectedItem >= itemIndex)
-                    selectedItem--;
+                selectedItem--;
 
                 // 인덱스가 0보다 작을 수는 없으므로 보정
                 if (selectedItem < 0)
@@ -946,18 +927,25 @@ namespace SavedContentsManager
             }
 
             // 항목 스크롤
-            if (topItemName != null)
-            {
-                foreach (ListViewItem item in listSource.Items)
-                {
-                    if (topItemName.Equals(item.Name))
-                    {
-                        listSource.TopItem = item;
-                        break;
-                    }
-                }
-            }
+            _listSource_SetTopItem();
+        }
 
+        /// <summary>
+        /// 작업 후 최상위 항목 Set
+        /// </summary>
+        private void _listSource_SetTopItem()
+        {
+            // 선택한 항목이 있으면 선택한 항목이 대략 가운데 오도록 한다. 5개 위에 있는 항목 선택
+            if (listSource.SelectedIndices.Count > 0)
+            {
+                int idx = listSource.SelectedIndices[0] - 5;
+                if (idx < 0)
+                {
+                    idx = 0;
+                }
+                listSource.TopItem = listSource.Items[idx];
+            }
+            // TODO 선택한 항목이 없는 경우
         }
 
         /// <summary>
@@ -1082,6 +1070,82 @@ namespace SavedContentsManager
             Console.WriteLine("Start [" + startName + "]");
 
             System.Diagnostics.Process.Start("explorer.exe", "\"" + startName + "\"");
+        }
+
+        /// <summary>
+        /// 리스트소스 선택항목 위로
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnSelUp_Click(object sender, EventArgs e)
+        {
+            if (listSource.SelectedItems.Count == 0)
+                return;
+
+            int selectedIndex = listSource.SelectedIndices[0] - 1;
+            if (selectedIndex < 0)
+                return;
+
+            listSource.SelectedIndices.Remove(0);
+            listSource.SelectedIndices.Add(selectedIndex);
+
+            _listSource_SetTopItem();
+        }
+
+        /// <summary>
+        /// 리스트소스 선택항목 아래로
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnSelDown_Click(object sender, EventArgs e)
+        {
+            if (listSource.SelectedItems.Count == 0)
+                return;
+
+            int selectedIndex = listSource.SelectedIndices[0] + 1;
+            if (selectedIndex >= listSource.Items.Count)
+                return;
+
+            listSource.SelectedIndices.Remove(0);
+            listSource.SelectedIndices.Add(selectedIndex);
+
+            _listSource_SetTopItem();
+        }
+
+        /// <summary>
+        /// 폼 키보드 이벤트
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MoveForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control)
+            {
+                if (e.KeyCode == Keys.Up)
+                {
+                    btnSelUp_Click(sender, null);
+                    e.Handled = true;
+                    e.SuppressKeyPress = false;
+                }
+                if (e.KeyCode == Keys.Down)
+                {
+                    btnSelDown_Click(sender, null);
+                    e.Handled = true;
+                    e.SuppressKeyPress = false;
+                }
+                if (e.KeyCode == Keys.D)
+                {
+                    btnDelete_Click(sender, null);
+                    e.Handled = true;
+                    e.SuppressKeyPress = false;
+                }
+                if (e.KeyCode == Keys.A)
+                {
+                    btnProcessAll_Click(sender, null);
+                    e.Handled = true;
+                    e.SuppressKeyPress = false;
+                }
+            }
         }
     }
 }

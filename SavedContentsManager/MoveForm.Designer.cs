@@ -54,6 +54,12 @@
             this.btnTargetSelOpen = new System.Windows.Forms.Button();
             this.btnRefreshSource = new System.Windows.Forms.Button();
             this.textTargetName = new System.Windows.Forms.TextBox();
+            this.btnSelUp = new System.Windows.Forms.Button();
+            this.btnSelDown = new System.Windows.Forms.Button();
+            this.labelDesc1 = new System.Windows.Forms.Label();
+            this.labelDesc2 = new System.Windows.Forms.Label();
+            this.labelDesc3 = new System.Windows.Forms.Label();
+            this.labelDesc4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnSourceOpen
@@ -126,6 +132,7 @@
             this.listSource.View = System.Windows.Forms.View.Details;
             this.listSource.SelectedIndexChanged += new System.EventHandler(this.listSource_SelectedIndexChanged);
             this.listSource.DoubleClick += new System.EventHandler(this.listSource_DoubleClick);
+            this.listSource.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MoveForm_KeyDown);
             // 
             // listSourceDetail
             // 
@@ -309,11 +316,73 @@
             this.textTargetName.Size = new System.Drawing.Size(347, 21);
             this.textTargetName.TabIndex = 29;
             // 
+            // btnSelUp
+            // 
+            this.btnSelUp.Location = new System.Drawing.Point(451, 146);
+            this.btnSelUp.Name = "btnSelUp";
+            this.btnSelUp.Size = new System.Drawing.Size(24, 23);
+            this.btnSelUp.TabIndex = 30;
+            this.btnSelUp.Text = "△";
+            this.btnSelUp.UseVisualStyleBackColor = true;
+            this.btnSelUp.Click += new System.EventHandler(this.btnSelUp_Click);
+            // 
+            // btnSelDown
+            // 
+            this.btnSelDown.Location = new System.Drawing.Point(452, 174);
+            this.btnSelDown.Name = "btnSelDown";
+            this.btnSelDown.Size = new System.Drawing.Size(24, 23);
+            this.btnSelDown.TabIndex = 31;
+            this.btnSelDown.Text = "▽";
+            this.btnSelDown.UseVisualStyleBackColor = true;
+            this.btnSelDown.Click += new System.EventHandler(this.btnSelDown_Click);
+            // 
+            // labelDesc1
+            // 
+            this.labelDesc1.AutoSize = true;
+            this.labelDesc1.Location = new System.Drawing.Point(485, 151);
+            this.labelDesc1.Name = "labelDesc1";
+            this.labelDesc1.Size = new System.Drawing.Size(26, 12);
+            this.labelDesc1.TabIndex = 32;
+            this.labelDesc1.Text = "^Up";
+            // 
+            // labelDesc2
+            // 
+            this.labelDesc2.AutoSize = true;
+            this.labelDesc2.Location = new System.Drawing.Point(484, 179);
+            this.labelDesc2.Name = "labelDesc2";
+            this.labelDesc2.Size = new System.Drawing.Size(43, 12);
+            this.labelDesc2.TabIndex = 33;
+            this.labelDesc2.Text = "^Down";
+            // 
+            // labelDesc3
+            // 
+            this.labelDesc3.AutoSize = true;
+            this.labelDesc3.Location = new System.Drawing.Point(474, 343);
+            this.labelDesc3.Name = "labelDesc3";
+            this.labelDesc3.Size = new System.Drawing.Size(19, 12);
+            this.labelDesc3.TabIndex = 34;
+            this.labelDesc3.Text = "^A";
+            // 
+            // labelDesc4
+            // 
+            this.labelDesc4.AutoSize = true;
+            this.labelDesc4.Location = new System.Drawing.Point(447, 423);
+            this.labelDesc4.Name = "labelDesc4";
+            this.labelDesc4.Size = new System.Drawing.Size(19, 12);
+            this.labelDesc4.TabIndex = 35;
+            this.labelDesc4.Text = "^D";
+            // 
             // MoveForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(971, 480);
+            this.Controls.Add(this.labelDesc4);
+            this.Controls.Add(this.labelDesc3);
+            this.Controls.Add(this.labelDesc2);
+            this.Controls.Add(this.labelDesc1);
+            this.Controls.Add(this.btnSelDown);
+            this.Controls.Add(this.btnSelUp);
             this.Controls.Add(this.textTargetName);
             this.Controls.Add(this.btnRefreshSource);
             this.Controls.Add(this.btnTargetSelOpen);
@@ -339,10 +408,12 @@
             this.Controls.Add(this.btnSourceBrowse);
             this.Controls.Add(this.comboSourceFolder);
             this.Controls.Add(this.label1);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.Name = "MoveForm";
             this.Text = "Contents Manage";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MoveForm_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -376,5 +447,11 @@
         private System.Windows.Forms.Button btnTargetSelOpen;
         private System.Windows.Forms.Button btnRefreshSource;
         private System.Windows.Forms.TextBox textTargetName;
+        private System.Windows.Forms.Button btnSelUp;
+        private System.Windows.Forms.Button btnSelDown;
+        private System.Windows.Forms.Label labelDesc1;
+        private System.Windows.Forms.Label labelDesc2;
+        private System.Windows.Forms.Label labelDesc3;
+        private System.Windows.Forms.Label labelDesc4;
     }
 }
