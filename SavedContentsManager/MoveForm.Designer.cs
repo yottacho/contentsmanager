@@ -132,7 +132,6 @@
             this.listSource.View = System.Windows.Forms.View.Details;
             this.listSource.SelectedIndexChanged += new System.EventHandler(this.listSource_SelectedIndexChanged);
             this.listSource.DoubleClick += new System.EventHandler(this.listSource_DoubleClick);
-            this.listSource.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MoveForm_KeyDown);
             // 
             // listSourceDetail
             // 
@@ -410,6 +409,7 @@
             this.Controls.Add(this.label1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.KeyPreview = true;
             this.MaximizeBox = false;
             this.Name = "MoveForm";
             this.Text = "Contents Manage";

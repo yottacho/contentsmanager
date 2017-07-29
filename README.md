@@ -54,6 +54,8 @@ Download exe file and execute it
 
 ## Release History
 
+* 1.1.4
+    * 키입력 이벤트 수정
 * 1.1.3
     * 항목 스크롤 개선
 * 1.1.2
