@@ -329,7 +329,6 @@ namespace SavedContentsManager
         /// <param name="e"></param>
         private void btnSourceBrowse_Click(object sender, EventArgs e)
         {
-            //Console.WriteLine("Text => " + comboContentsFolder.Text);
             if (comboSourceFolder.Text.Length > 0)
             {
                 folderBrowserDialog1.SelectedPath = comboSourceFolder.Text;
@@ -467,15 +466,12 @@ namespace SavedContentsManager
             textTargetName.ReadOnly = false;
             textTargetName.Text = "";
 
-            Console.WriteLine("Source [" + dirName + "][" + dirPathName + "]");
-
             listSourceDetail_Init(dirPathName);
 
             // 기존에 정의해 둔 이름이 있는지 체크
             if (nameMappingCache.ContainsKey(dirName))
             {
                 // 기존에 정의한 이름이 있으면 이 이름을 우선 사용
-                Console.WriteLine("Target name cached [" + nameMappingCache[dirName] + "]");
                 dirName = nameMappingCache[dirName];
             }
 
@@ -485,7 +481,6 @@ namespace SavedContentsManager
                 ListViewItem foundItem = listTarget.FindItemWithText(dirName, false, 0, false);
                 if (foundItem != null)
                 {
-                    Console.WriteLine("일치하는 이름 발견");
                     foundItem.Selected = true;
                     listTarget.TopItem = foundItem;
 
@@ -502,7 +497,7 @@ namespace SavedContentsManager
                         foundItem = listTarget.FindItemWithText(dirName, false, 0, false);
                         if (foundItem != null)
                         {
-                            Console.WriteLine("일부 일치하는 이름 발견");
+                            //Console.WriteLine("일부 일치하는 이름 발견");
                             foundItem.Selected = true;
                             listTarget.TopItem = foundItem;
 
@@ -516,7 +511,7 @@ namespace SavedContentsManager
                     if (!f)
                     {
                         // 일치하는 이름이 없을 경우 선택 클리어
-                        Console.WriteLine("일치하는 이름이 없음 (새 항목)");
+                        //Console.WriteLine("일치하는 이름이 없음 (새 항목)");
                         listTarget.SelectedIndices.Clear();
                         if (listTarget.Items.Count > 0)
                             listTarget.TopItem = listTarget.Items[0];
@@ -530,7 +525,7 @@ namespace SavedContentsManager
             else
             {
                 // 일치하는 이름이 없을 경우 선택 클리어
-                Console.WriteLine("일치하는 이름이 없음 (새 항목)");
+                //Console.WriteLine("일치하는 이름이 없음 (새 항목)");
                 listTarget.SelectedIndices.Clear();
                 if (listTarget.Items.Count > 0)
                     listTarget.TopItem = listTarget.Items[0];
@@ -598,12 +593,7 @@ namespace SavedContentsManager
 
             if (listTargetTodo.Items.Count < 1)
             {
-                if (MessageBox.Show("처리할 대상이 없습니다. 생성해서 이동할까요?", "선택", MessageBoxButtons.YesNo) == DialogResult.No)
-                {
-                    return;
-                }
-
-                // source 폴더를 sub folder에 밀어넣음
+                // target 이름 생성
                 ListViewItem srcItem = listSource.SelectedItems[0];
 
                 // 최종번호 가져와서 최종번호 이후로 처리
@@ -616,17 +606,24 @@ namespace SavedContentsManager
                         startIndex = i;
                     }
                 }
-
-                listTargetTodo.BeginUpdate();
                 startIndex++;
+                string no = string.Format("{0:D3}", startIndex);
 
                 // srcItem.Name : full path
                 // srcItem.Text : directory name
-                string no = string.Format("{0:D3}", startIndex);
                 ListViewItem item = new ListViewItem(no);
                 item.Name = srcItem.Name; // move from
                 item.SubItems.Add(srcItem.Text);
                 item.SubItems.Add(srcItem.SubItems[1]);
+
+                string targetTitleName = item.SubItems[0].Text + " " + item.SubItems[1].Text;
+                if (MessageBox.Show("처리할 대상이 없습니다. 생성해서 이동할까요?\n" + targetTitleName, "선택", MessageBoxButtons.YesNo) == DialogResult.No)
+                {
+                    return;
+                }
+
+                // source 폴더를 sub folder에 밀어넣음
+                listTargetTodo.BeginUpdate();
 
                 //MessageBox.Show("Name:" + srcItem.Name + "\nText:" + srcItem.Text);
 
@@ -647,12 +644,12 @@ namespace SavedContentsManager
                 //targetDirName = textTarget.Text + Path.DirectorySeparatorChar + listSource.SelectedItems[0].Text;
                 // 지정한 이름으로 생성할 수 있도록 함
                 targetDirName = textTarget.Text + Path.DirectorySeparatorChar + textTargetName.Text;
-                Console.WriteLine("New target dir : " + targetDirName);
+                //Console.WriteLine("New target dir : " + targetDirName);
 
                 // 이름이 불일치하면 매핑캐시에 저장
                 if (!listSource.SelectedItems[0].Text.Equals(textTargetName.Text))
                 {
-                    Console.WriteLine("Cache Set " + listSource.SelectedItems[0].Text + " = " + textTargetName.Text);
+                    //Console.WriteLine("Cache Set " + listSource.SelectedItems[0].Text + " = " + textTargetName.Text);
                     // 소스와 타겟 이름이 다르면 매핑캐시에 저장
                     nameMappingCache[listSource.SelectedItems[0].Text] = textTargetName.Text;
                     // 저장
@@ -676,7 +673,7 @@ namespace SavedContentsManager
 
                 if (!listSource.SelectedItems[0].Text.Equals(listTarget.SelectedItems[0].Text))
                 {
-                    Console.WriteLine("Cache Set " + listSource.SelectedItems[0].Text + " = " + listTarget.SelectedItems[0].Text);
+                    //Console.WriteLine("Cache Set " + listSource.SelectedItems[0].Text + " = " + listTarget.SelectedItems[0].Text);
                     // 소스와 타겟 이름이 다르면 매핑캐시에 저장
                     nameMappingCache[listSource.SelectedItems[0].Text] = listTarget.SelectedItems[0].Text;
                 }
@@ -685,14 +682,14 @@ namespace SavedContentsManager
                     // 소스와 타겟이 동일하면 소스를 매핑캐시에서 삭제
                     if (nameMappingCache.ContainsKey(listSource.SelectedItems[0].Text))
                     {
-                        Console.WriteLine("Cache Remove " + listSource.SelectedItems[0].Text);
+                        //Console.WriteLine("Cache Remove " + listSource.SelectedItems[0].Text);
                         nameMappingCache.Remove(listSource.SelectedItems[0].Text);
                     }
                 }
                 nameMappingCache.Save(textTarget.Text, CACHE_FILE_NAME);
             }
 
-            Console.WriteLine("btnProcessAll_Click Target dir : " + targetDirName);
+            //Console.WriteLine("btnProcessAll_Click Target dir : " + targetDirName);
 
             // UI 컨트롤에 저장한 항목을 다른 메모리로 복제(다른 쓰레드에서 UI 컨트롤 억세스를 차단)
             processDir = listSource.SelectedItems[0];
@@ -723,7 +720,7 @@ namespace SavedContentsManager
             workerRunning = true;
 
             int directoryCount = 0;
-            Console.WriteLine("Count: " + progressTarget.Length);
+            //Console.WriteLine("Count: " + progressTarget.Length);
             int procIdx = 0;
             int procTot = 0;
 
@@ -738,7 +735,7 @@ namespace SavedContentsManager
             {
                 directoryCount++;
                 string targetName = targetDirName + Path.DirectorySeparatorChar + item.Text + " " + item.SubItems[1].Text;
-                Console.WriteLine("Move [" + item.Name + "] to [" + targetName + "]");
+                //Console.WriteLine("Move [" + item.Name + "] to [" + targetName + "]");
 
                 try
                 {
@@ -751,7 +748,7 @@ namespace SavedContentsManager
                     foreach (FileInfo f in files)
                     {
                         procIdx++;
-                        Console.WriteLine("Move ... " + f.FullName);
+                        //Console.WriteLine("Move ... " + f.FullName);
 
                         progressText = "[" + directoryCount + "/" + progressTarget.Length + "] " +
                             item.SubItems[1].Text + "\\" +
@@ -811,7 +808,7 @@ namespace SavedContentsManager
             btnProcessAll.Enabled = true;
 
             // moveall 이후 껍데기만 남은 소스 디렉터리 삭제
-            Console.WriteLine("Delete source: " + processDir.Name);
+            //Console.WriteLine("Delete source: " + processDir.Name);
             try
             {
                 if (Directory.Exists(processDir.Name))
@@ -894,7 +891,7 @@ namespace SavedContentsManager
             if (result != DialogResult.Yes)
                 return;
 
-            Console.WriteLine("Delete [" + srcItem.Name + "]");
+            //Console.WriteLine("Delete [" + srcItem.Name + "]");
 
             // 매핑캐시에 정의된 이름이 있으면 삭제
             if (nameMappingCache.ContainsKey(listSource.SelectedItems[0].Text))
@@ -959,7 +956,7 @@ namespace SavedContentsManager
                 return;
 
             string selectedName = listSourceDetail.SelectedItems[0].Name;
-            Console.WriteLine("Full name [" + selectedName + "]");
+            //Console.WriteLine("Full name [" + selectedName + "]");
 
             FileInfo[] files = new DirectoryInfo(selectedName).GetFiles();
             Array.Sort(files, (x, y) =>
@@ -974,7 +971,7 @@ namespace SavedContentsManager
                 return;
 
             string startName = selectedName + Path.DirectorySeparatorChar + files[0].Name;
-            Console.WriteLine("Start [" + startName + "]");
+            //Console.WriteLine("Start [" + startName + "]");
 
             System.Diagnostics.Process.Start("explorer.exe", "\"" + startName + "\"");
         }
@@ -985,7 +982,7 @@ namespace SavedContentsManager
                 return;
 
             string selectedName = listSource.SelectedItems[0].Name;
-            Console.WriteLine("Full name [" + selectedName + "]");
+            //Console.WriteLine("Full name [" + selectedName + "]");
 
             FileInfo[] files = new DirectoryInfo(selectedName).GetFiles();
             Array.Sort(files, (x, y) =>
@@ -1000,7 +997,7 @@ namespace SavedContentsManager
                 return;
 
             string startName = selectedName + Path.DirectorySeparatorChar + files[0].Name;
-            Console.WriteLine("Start [" + startName + "]");
+            //Console.WriteLine("Start [" + startName + "]");
 
             System.Diagnostics.Process.Start("explorer.exe", "\"" + startName + "\"");
         }
@@ -1052,7 +1049,7 @@ namespace SavedContentsManager
                 return;
 
             string selectedName = listTarget.SelectedItems[0].Name + Path.DirectorySeparatorChar + listTargetDetail.SelectedItems[0].Name;
-            Console.WriteLine("Full name [" + selectedName + "]");
+            //Console.WriteLine("Full name [" + selectedName + "]");
 
             FileInfo[] files = new DirectoryInfo(selectedName).GetFiles();
             Array.Sort(files, (x, y) =>
@@ -1067,7 +1064,7 @@ namespace SavedContentsManager
                 return;
 
             string startName = selectedName + Path.DirectorySeparatorChar + files[0].Name;
-            Console.WriteLine("Start [" + startName + "]");
+            //Console.WriteLine("Start [" + startName + "]");
 
             System.Diagnostics.Process.Start("explorer.exe", "\"" + startName + "\"");
         }

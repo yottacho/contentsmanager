@@ -412,6 +412,7 @@
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.Name = "MoveForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Contents Manage";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MoveForm_KeyDown);
             this.ResumeLayout(false);

@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace SavedContentsManager.utils
 {
 
     class DirectoryToDataTable
     {
-        const string CACHE_FILE_NAME = "scm_cache.xml";
+        //const string CACHE_FILE_NAME = "scm_cache.xml";
+        const string CACHE_FILE_NAME = "scm_cache.db";
         public delegate void ReportProgress(int p);
         public ReportProgress reportProgressMethod;
 
@@ -43,45 +46,139 @@ namespace SavedContentsManager.utils
 
         private void init()
         {
-            if (File.Exists(cacheFileName))
+            //if (File.Exists(cacheFileName))
+            //{
+            //    // load cache
+            //    try
+            //    {
+            //        directoryInfo.ReadXml(cacheFileName);
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        Console.WriteLine(e.ToString());
+            //    }
+            //}
+
+            // Open database
+            string strConn = "Data Source=" + cacheFileName.Replace('\\', '/') + ";Version=3;";
+            using (SQLiteConnection conn = new SQLiteConnection(strConn))
             {
-                // load cache
-                Console.WriteLine("Load from cache ...");
-                try
+                conn.Open();
+                //
+                DataTable dtSchema = conn.GetSchema("Tables");
+
+                DataRow[] rows = dtSchema.Select("TABLE_NAME='SCM_CACHE'");
+                if (rows.Length == 0)
                 {
-                    directoryInfo.ReadXml(cacheFileName);
+                    _newDatabase(conn);
                 }
-                catch (Exception e)
+
+                using (SQLiteCommand cmd = new SQLiteCommand("SELECT TITLE_NAME, LAST_UPDATED, SUB_FOLDERS, PARENT, CHK FROM SCM_CACHE ORDER BY 1", conn))
+                using (SQLiteDataReader rdr = cmd.ExecuteReader())
                 {
-                    Console.WriteLine(e.ToString());
+                    while (rdr.Read())
+                    {
+                        //MessageBox.Show(rdr["name"] + " " + rdr["age"]);
+
+                        DataRow row = directoryInfo.NewRow();
+                        row["Title Name"] = rdr["TITLE_NAME"];
+                        row["Last Updated"] = rdr["LAST_UPDATED"];
+                        row["Sub Folders"] = rdr["SUB_FOLDERS"];
+                        row["Parent"] = rdr["PARENT"];
+                        row["Check"] = rdr["CHK"];
+
+                        directoryInfo.Rows.Add(row);
+                    }
                 }
             }
+        }
 
-            //DifferentCheck();
+        private void _newDatabase(SQLiteConnection conn)
+        {
+            string sql = "CREATE TABLE SCM_CACHE (TITLE_NAME varchar(200), LAST_UPDATED varchar(30), SUB_FOLDERS INTEGER, PARENT varchar(10), CHK INTEGER, PRIMARY KEY (TITLE_NAME))";
+
+            using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
+            {
+                cmd.ExecuteNonQuery();
+            }
         }
 
         public void WriteCache()
         {
-            Console.WriteLine("WriteCache.");
+            //File.Delete(cacheFileName);
+            //try
+            //{
+            //    directoryInfo.WriteXml(cacheFileName);
+            //}
+            //catch (Exception)
+            //{
+            //    directoryInfo.WriteXml(cacheFileName);
+            //}
 
-            File.Delete(cacheFileName);
-            directoryInfo.WriteXml(cacheFileName);
+            string strConn = "Data Source=" + cacheFileName.Replace('\\', '/') + ";Version=3;";
+            using (SQLiteConnection conn = new SQLiteConnection(strConn))
+            {
+                conn.Open();
+                //
+                DataTable dtSchema = conn.GetSchema("Tables");
+
+                DataRow[] rows = dtSchema.Select("TABLE_NAME='SCM_CACHE'");
+                if (rows.Length == 0)
+                {
+                    _newDatabase(conn);
+                }
+
+                using (SQLiteTransaction transaction = conn.BeginTransaction())
+                {
+                    using (SQLiteCommand cmd = new SQLiteCommand("DELETE FROM SCM_CACHE", conn))
+                    {
+                        cmd.Transaction = transaction;
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    string sql = "INSERT INTO SCM_CACHE (TITLE_NAME, LAST_UPDATED, SUB_FOLDERS, PARENT, CHK) VALUES (@TITLE_NAME, @LAST_UPDATED, @SUB_FOLDERS, @PARENT, @CHK)";
+                    using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
+                    {
+                        cmd.Parameters.Add("@TITLE_NAME", DbType.String);
+                        cmd.Parameters.Add("@LAST_UPDATED", DbType.String);
+                        cmd.Parameters.Add("@SUB_FOLDERS", DbType.Int16);
+                        cmd.Parameters.Add("@PARENT", DbType.String);
+                        cmd.Parameters.Add("@CHK", DbType.Int16);
+                        cmd.Transaction = transaction;
+                        cmd.Prepare();
+
+                        foreach (DataRow row in directoryInfo.Rows)
+                        {
+                            //directoryInfo.Columns.Add("Title Name", typeof(string));
+                            //directoryInfo.Columns.Add("Last Updated", typeof(string));
+                            //directoryInfo.Columns.Add("Sub Folders", typeof(int));
+                            //directoryInfo.Columns.Add("Parent", typeof(string));
+                            //directoryInfo.Columns.Add("Check", typeof(int));
+
+                            cmd.Parameters["@TITLE_NAME"].Value = row["Title Name"].ToString();
+                            cmd.Parameters["@LAST_UPDATED"].Value = row["Last Updated"].ToString();
+                            cmd.Parameters["@SUB_FOLDERS"].Value = row["Sub Folders"].ToString();
+                            cmd.Parameters["@PARENT"].Value = row["Parent"].ToString();
+                            cmd.Parameters["@CHK"].Value = row["Check"].ToString();
+
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    transaction.Commit();
+                }
+            }
         }
 
         public void Refresh()
         {
-            Console.WriteLine("Refresh.");
-
             directoryInfo.Rows.Clear();
             DifferentCheck();
         }
 
         public void DifferentCheck()
         {
-            Console.WriteLine("DifferentCheck.");
-
             DifferentCheck("", sourceDirectory);
-
             WriteCache();
         }
 
@@ -116,7 +213,6 @@ namespace SavedContentsManager.utils
                 DataRow[] foundRows = directoryInfo.Select("[Title Name] = '" + dirName + "'");
                 if (foundRows.Length == 0)
                 {
-                    Console.WriteLine("New: " + dir.Name);
                     //int subDir = dir.GetDirectories().Length;
                     DetailDirectory detail = new DetailDirectory(dir.FullName);
                     int subDir = detail.Directories.Count;
@@ -135,13 +231,11 @@ namespace SavedContentsManager.utils
                 {
                     if (foundRows.Length > 1)
                     {
-                        Console.WriteLine("ERROR! duplicated entry found.");
                         throw new Exception("Duplicated entry!");
                     }
 
                     if (!lastDate.Equals(foundRows[0]["Last Updated"]))
                     {
-                        Console.WriteLine("Update: " + dir.Name);
                         //int subDir = dir.GetDirectories().Length;
                         DetailDirectory detail = new DetailDirectory(dir.FullName);
                         int subDir = detail.Directories.Count;
@@ -164,7 +258,6 @@ namespace SavedContentsManager.utils
                 if (q.Count() == 0)
                 {
                     // not found!
-                    Console.WriteLine("Delete: " + item["Title Name"]);
                     del.Add(item);
                 }
             }

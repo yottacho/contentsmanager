@@ -101,7 +101,6 @@ namespace SavedContentsManager.utils
             {
                 if (item.TargetFullName != null && item.TargetFullName.Length > 0 && !item.FullName.Equals(item.TargetFullName))
                 {
-                    Console.WriteLine("Rename [" + item.FullName + "] => [" + item.TargetFullName + "]");
                     string fromName = basePath + Path.DirectorySeparatorChar + item.FullName;
                     string toName = basePath + Path.DirectorySeparatorChar + item.TargetFullName;
 

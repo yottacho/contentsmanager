@@ -76,7 +76,6 @@ namespace SavedContentsManager.utils
                 isPrefix = true;
             }
 
-            Console.WriteLine(isPrefix + " [" + Prefix + "][" + Name + "]");
             return isPrefix;
         }
     }

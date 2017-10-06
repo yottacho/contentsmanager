@@ -2,29 +2,7 @@
 
 시리즈 컨텐츠 관리 프로그램
 
-폴더에 아래 구조로 저장하는 컨텐츠를 관리한다.
-
-```
-* 컨텐츠명1
-  * 001 컨텐츠명1-1
-    * file1.abc
-    * file2.abc
-  * 002 컨텐츠명1-2
-    * file1.abc
-    * file2.abc
-  * 003 컨텐츠명1-3
-    * file1.abc
-    * file2.abc
-* 컨텐츠명2
-  * 001 컨텐츠명2-1
-    * file1.abc
-    * file2.abc
-  * 002 컨텐츠명2-2
-    * file1.abc
-    * file2.abc
-```
-
-귀찮으니 자세한 내용은 생략한다.
+개인적으로 써먹기 위한 유틸리티로 귀찮으니 자세한 내용은 생략한다.
 
 ## 주요 기능
 
@@ -40,9 +18,10 @@
 
 ## Build
 
-* Microsoft(R) Visual Studio Community 2015
+* Microsoft(R) Visual Studio 2017
 * .Net Framework 4.5.2
 * C#
+* SQLite nuget
 
 ## Installation
 
@@ -54,6 +33,8 @@ Download exe file and execute it
 
 ## Release History
 
+* 1.2.0
+    * Console.WriteLine 삭제, 캐시 XML 파일을 SQLite DB로 변경
 * 1.1.4
     * 키입력 이벤트 수정
 * 1.1.3

@@ -35,7 +35,6 @@ namespace SavedContentsManager.utils
 
         public static void addContentsHistory(string newValue)
         {
-            Console.WriteLine("newValue =" + newValue);
             string[] list = getContentsHistory();
             foreach (string item in list)
             {

@@ -47,7 +47,7 @@ namespace SavedContentsManager
             tabControl1.SelectedIndex = 0;
             txtSearch.Focus();
 
-            dataGridTitles_Init();
+            //dataGridTitles_Init();
         }
 
         private void comboContentsFolder_SelectedIndexChanged(object sender, EventArgs e)
@@ -99,7 +99,6 @@ namespace SavedContentsManager
         /// <param name="e"></param>
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-            //Console.WriteLine("Text => " + comboContentsFolder.Text);
             if (comboContentsFolder.Text.Length > 0)
             {
                 folderBrowserDialog.SelectedPath = comboContentsFolder.Text;
@@ -156,7 +155,6 @@ namespace SavedContentsManager
         /// <param name="e"></param>
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
-            //Console.WriteLine(txtSearch.Text);
             if (contentsDirectory != null)
             {
                 string srchStr = txtSearch.Text.Replace("'", "''");
@@ -227,7 +225,6 @@ namespace SavedContentsManager
                 bWorker.RunWorkerAsync();
             }
 
-            Console.WriteLine("Refreshed.");
         }
 
         public void refreshProcess(object sender, DoWorkEventArgs e)
@@ -324,8 +321,6 @@ namespace SavedContentsManager
         /// <param name="e"></param>
         private void tabControl1_Selected(object sender, TabControlEventArgs e)
         {
-            Console.WriteLine("Tab Selected " + e.TabPageIndex + "/" + e.TabPage.Text);
-
             switch (e.TabPageIndex)
             {
                 case 0: // 타이틀 페이지
