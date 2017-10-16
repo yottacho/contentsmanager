@@ -8,6 +8,18 @@ namespace SavedContentsManager.utils
 {
     class Configure
     {
+        public static string LastDate
+        {
+            get
+            {
+                return ConfigureImpl.get("LastDate");
+            }
+            set
+            {
+                ConfigureImpl.set("LastDate", value);
+            }
+        }
+
         public static string LastSelectedContentsFolder
         {
             get

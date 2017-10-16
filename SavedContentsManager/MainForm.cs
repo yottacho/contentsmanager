@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SQLite;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -27,6 +29,16 @@ namespace SavedContentsManager
 
             // 타이틀에 버전명 추가
             this.Text += " - " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            // DB 백업
+            DateTime dateTime = DateTime.Now;
+            if (!dateTime.ToString("yyyy-MM-dd").Equals(Configure.LastDate))
+            {
+                Configure.LastDate = dateTime.ToString("yyyy-MM-dd");
+
+                string dbFile = DataBaseUtils.getDatabaseFilePath();
+                File.Copy(dbFile, dbFile + ".bak", true);
+            }
 
             Application.Idle += initialize;
         }
@@ -76,12 +88,18 @@ namespace SavedContentsManager
                 catch (Exception e)
                 {
                     MessageBox.Show("디렉터리에 접근할 수 없습니다.\n" + e.Message);
+                    Trace.WriteLine(e.StackTrace);
                     contentsDirectory = null;
                     return;
                 }
 
                 dataGridTitles.DataSource = contentsDirectory.DirectoryInfoView;
-                dataGridTitles.Columns["Sub Folders"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                for (int i = 0; i < dataGridTitles.Columns.Count; i++)
+                {
+                    dataGridTitles.Columns[i].HeaderText = contentsDirectory.DirectoryInfoView.Table.Columns[dataGridTitles.Columns[i].HeaderText].Caption;
+                }
+
+                dataGridTitles.Columns["SUB_FOLDERS"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
                 dataGridTitles.AutoResizeColumns();
 
                 // 캐시 파일이 있으면 변경분만 갱신하고 캐시 파일이 없으면 백그라운드에서 전체를 갱신 처리
@@ -158,7 +176,7 @@ namespace SavedContentsManager
             if (contentsDirectory != null)
             {
                 string srchStr = txtSearch.Text.Replace("'", "''");
-                contentsDirectory.DirectoryInfoView.RowFilter = "[Title Name] LIKE '%" + srchStr + "%'";
+                contentsDirectory.DirectoryInfoView.RowFilter = "[TITLE_NAME] LIKE '%" + srchStr + "%'";
             }
         }
 
@@ -243,6 +261,12 @@ namespace SavedContentsManager
             progressBar1.Value = 100;
 
             dataGridTitles.DataSource = contentsDirectory.DirectoryInfoView;
+            for (int i = 0; i < dataGridTitles.Columns.Count; i++)
+            {
+                dataGridTitles.Columns[i].HeaderText = contentsDirectory.DirectoryInfoView.Table.Columns[dataGridTitles.Columns[i].HeaderText].Caption;
+            }
+
+            dataGridTitles.Columns["SUB_FOLDERS"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             dataGridTitles.AutoResizeColumns();
         }
 
@@ -277,11 +301,11 @@ namespace SavedContentsManager
         {
             string title = "";
             if (e != null)
-                title = dataGridTitles.Rows[e.RowIndex].Cells["Title Name"].Value.ToString();
+                title = dataGridTitles.Rows[e.RowIndex].Cells["TITLE_NAME"].Value.ToString();
             else if (dataGridTitles.SelectedRows.Count > 0)
-                title = dataGridTitles.SelectedRows[0].Cells["Title Name"].Value.ToString();
+                title = dataGridTitles.SelectedRows[0].Cells["TITLE_NAME"].Value.ToString();
             else if (dataGridTitles.Rows.Count > 0)
-                title = dataGridTitles.Rows[0].Cells["Title Name"].Value.ToString();
+                title = dataGridTitles.Rows[0].Cells["TITLE_NAME"].Value.ToString();
 
             if (title.Length > 0)
             {
@@ -300,7 +324,7 @@ namespace SavedContentsManager
         {
             if (e.KeyCode == Keys.Enter)
             {
-                string title = dataGridTitles.SelectedRows[0].Cells["Title Name"].Value.ToString();
+                string title = dataGridTitles.SelectedRows[0].Cells["TITLE_NAME"].Value.ToString();
                 txtTitle.Text = title;
 
                 // 탭 변경

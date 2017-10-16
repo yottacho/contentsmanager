@@ -68,6 +68,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="utils\Configure.cs" />
     <Compile Include="utils\ConfigureImpl.cs" />
+    <Compile Include="utils\DataBaseUtils.cs" />
     <Compile Include="utils\DetailDirectory.cs" />
     <Compile Include="utils\SerializableDictionary.cs" />
     <Compile Include="utils\DirectoryToDataTable.cs" />
@@ -91,6 +92,7 @@
       <SubType>Form</SubType>
     </Compile>
     <None Include="packages.config" />
+    <None Include="Properties\DataSources\SavedContentsManager.utils.DirectoryToDataTable.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

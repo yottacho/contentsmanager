@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SQLite;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -15,8 +16,10 @@ namespace SavedContentsManager
 {
     public partial class MoveForm : Form
     {
-        const string CACHE_FILE_NAME = "scm_mapping.xml";
-        private SerializableDictionary<string, string> nameMappingCache;
+        const string TABLE_NAME = "SCM_MAPPING";
+
+        //const string CACHE_FILE_NAME = "scm_mapping.xml";
+        //private SerializableDictionary<string, string> nameMappingCache;
 
         private MoveForm()
         {
@@ -32,13 +35,27 @@ namespace SavedContentsManager
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty,
                 null, listTargetDetail, new object[] { true });
             */
+
+            // db check
+            // Open database
+            using (SQLiteConnection conn = new SQLiteConnection(DataBaseUtils.getConnectionString()))
+            {
+                conn.Open();
+
+                if (!DataBaseUtils.checkTable(conn, TABLE_NAME))
+                {
+                    using (IDbCommand cmd = conn.CreateCommand())
+                        _newDatabase(cmd);
+                }
+            }
         }
 
         public MoveForm(string targetPath) : this()
         {
             textTarget.Text = targetPath;
-            nameMappingCache = new SerializableDictionary<string, string>();
+            //nameMappingCache = new SerializableDictionary<string, string>();
 
+            /*
             try
             {
                 nameMappingCache.Load(textTarget.Text, CACHE_FILE_NAME);
@@ -50,6 +67,7 @@ namespace SavedContentsManager
             {
                 MessageBox.Show("매핑 파일에 접근할 수 없습니다.\n" + e.Message);
             }
+            */
 
             comboSourceFolder.Items.Clear();
             comboSourceFolder.Text = Configure.LastSelectedSourceFolder;
@@ -61,10 +79,10 @@ namespace SavedContentsManager
             list_TitleDetailInit(listTargetDetail);
             list_TitleDetailInit(listTargetTodo);
 
+            listTarget_Init();
+
             if (comboSourceFolder.Text.Length > 0)
                 listSource_Init();
-
-            listTarget_Init();
         }
 
         /// <summary>
@@ -119,6 +137,52 @@ namespace SavedContentsManager
             list.EndUpdate();
         }
 
+        private void _newDatabase(IDbCommand cmd)
+        {
+            string sql = "CREATE TABLE " + TABLE_NAME + " (" +
+                "SOURCE_NAME varchar(200), " +
+                "TARGET_NAME varchar(200), " +
+                "DELETE_YN varchar(1), " +
+                "PRIMARY KEY (SOURCE_NAME)" +
+                ")";
+
+            cmd.CommandText = sql;
+            cmd.ExecuteNonQuery();
+        }
+
+        private string[] _selectDatabase(string sourceName)
+        {
+            using (SQLiteConnection conn = new SQLiteConnection(DataBaseUtils.getConnectionString()))
+            {
+                conn.Open();
+
+                return _selectDatabase(conn, sourceName);
+            }
+        }
+
+        private string[] _selectDatabase(SQLiteConnection conn, string sourceName)
+        {
+            string[] targetInfo = new string[2];
+            SQLiteCommand selectCommand = conn.CreateCommand();
+            selectCommand.CommandText = "SELECT TARGET_NAME, DELETE_YN FROM " + TABLE_NAME + " WHERE SOURCE_NAME = @SOURCE_NAME";
+            selectCommand.Parameters.Add("@SOURCE_NAME", DbType.String, 200);
+            selectCommand.Prepare();
+
+            selectCommand.Parameters["@SOURCE_NAME"].Value = sourceName;
+
+            using (SQLiteDataReader r = selectCommand.ExecuteReader())
+            {
+                if (r.Read())
+                {
+                    targetInfo[0] = (string)r["TARGET_NAME"];
+                    targetInfo[1] = (string)r["DELETE_YN"];
+                    return targetInfo;
+                }
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// 소스폴더 리스트 데이터 구성
         /// </summary>
@@ -149,13 +213,47 @@ namespace SavedContentsManager
             listSource.BeginUpdate();
             listSource.Items.Clear();
 
-            foreach (DirectoryInfo dir in dirList)
+            using (SQLiteConnection conn = new SQLiteConnection(DataBaseUtils.getConnectionString()))
             {
-                ListViewItem item = new ListViewItem(dir.Name);
-                item.Name = dir.FullName; // 원본 파일명 저장
-                item.SubItems.Add(dir.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                conn.Open();
 
-                listSource.Items.Add(item);
+                foreach (DirectoryInfo dir in dirList)
+                {
+                    ListViewItem item = new ListViewItem(dir.Name);
+                    item.Name = dir.FullName; // 원본 파일명 저장
+                    item.SubItems.Add(dir.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss"));
+
+                    string[] mapInfo = _selectDatabase(conn, dir.Name);
+                    string targetName = dir.Name;
+                    if (mapInfo != null)
+                    {
+                        // 삭제된 항목
+                        if ("Y".Equals(mapInfo[1]))
+                            item.BackColor = Color.FromArgb(0xff, 0xc0, 0xc0);
+                        else
+                            targetName = mapInfo[0];
+                    }
+
+                    // target 과 매핑되는지 확인
+                    for (int i = 0; i < listTarget.Items.Count; i++)
+                    {
+                        if (targetName.Equals(listTarget.Items[i].Text))
+                        {
+                            item.BackColor = Color.FromArgb(0xe0, 0xfc, 0xe4);
+                            break;
+                        }
+                    }
+
+                    /*
+                    currentTrLog.BackColor = Color.FromArgb(0xe0, 0xfc, 0xe4);  // d 연녹색
+                    currentTrLog.BackColor = Color.FromArgb(0xb6, 0xda, 0xf0);  // i 청색
+                    currentTrLog.BackColor = Color.FromArgb(0xec, 0xec, 0x90);  // w 노랑
+                    currentTrLog.BackColor = Color.FromArgb(0xff, 0xc0, 0xc0);  // e 빨강
+                    currentTrLog.BackColor = Color.FromArgb(0xe0, 0xe0, 0xe0);  // x 회색
+                     */
+
+                    listSource.Items.Add(item);
+                }
             }
 
             listSource.EndUpdate();
@@ -210,8 +308,11 @@ namespace SavedContentsManager
         /// </summary>
         private void listTarget_Init(string search = "")
         {
-            textTargetSearch.Text = "";
+            //textTargetSearch.Text = "";
 
+            DirectoryToDataTable contentsDirectory = new DirectoryToDataTable(textTarget.Text);
+
+            /*
             DirectoryInfo[] dirList;
             try
             {
@@ -230,16 +331,25 @@ namespace SavedContentsManager
 
                 return xx.Name.CompareTo(yy.Name);
             });
+            */
 
             listTarget.BeginUpdate();
             listTarget.Items.Clear();
 
-            foreach (DirectoryInfo dir in dirList)
+            if (search != null && search.Length > 0)
+                contentsDirectory.DirectoryInfoView.RowFilter = "[TITLE_NAME] LIKE '%" + search + "%'";
+
+            foreach (DataRowView dir in contentsDirectory.DirectoryInfoView)
             {
+                /*
                 ListViewItem item = new ListViewItem(dir.Name);
                 item.Name = dir.FullName; // 원본 파일명 저장
                 item.SubItems.Add(dir.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                */
 
+                ListViewItem item = new ListViewItem((string)dir["TITLE_NAME"]);
+                item.Name = Path.Combine(textTarget.Text, (string)dir["TITLE_NAME"]);
+                item.SubItems.Add((string)dir["LAST_UPDATED"]);
                 listTarget.Items.Add(item);
             }
 
@@ -276,10 +386,14 @@ namespace SavedContentsManager
                 listTargetDetail.Items.Add(item);
             }
 
+            listTargetDetail.EndUpdate();
+
+            listTargetDetail.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            if (listTargetDetail.Columns[1].Width < (16 * 15))
+                listTargetDetail.Columns[1].Width = 16 * 15;
+
             if (listTargetDetail.Items.Count > 0)
                 listTargetDetail.TopItem = listTargetDetail.Items[listTargetDetail.Items.Count - 1];
-
-            listTargetDetail.EndUpdate();
         }
 
         /// <summary>
@@ -320,6 +434,11 @@ namespace SavedContentsManager
                 listTargetTodo.Items.Add(item);
             }
             listTargetTodo.EndUpdate();
+
+            listTargetTodo.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            if (listTargetTodo.Columns[1].Width < (16 * 15))
+                listTargetTodo.Columns[1].Width = 16 * 15;
+
         }
 
         /// <summary>
@@ -417,7 +536,7 @@ namespace SavedContentsManager
             if (e.KeyChar == (char)Keys.Enter)
             {
                 listTarget_Init(textTargetSearch.Text);
-                e.Handled = true;
+                //e.Handled = true;
             }
             else if (e.KeyChar == (char)Keys.Escape)
             {
@@ -469,11 +588,16 @@ namespace SavedContentsManager
             listSourceDetail_Init(dirPathName);
 
             // 기존에 정의해 둔 이름이 있는지 체크
+            /*
             if (nameMappingCache.ContainsKey(dirName))
             {
                 // 기존에 정의한 이름이 있으면 이 이름을 우선 사용
                 dirName = nameMappingCache[dirName];
             }
+            */
+            string[] mappingInfo = _selectDatabase(dirName);
+            if (mappingInfo != null && !"Y".Equals(mappingInfo[1]))
+                dirName = mappingInfo[0];
 
             // 타겟 중에서 같은 이름이 있는지 찾아서 선택
             if (listTarget.Items.Count > 0)
@@ -533,15 +657,6 @@ namespace SavedContentsManager
                 textTargetName.Text = listSource.SelectedItems[0].Text;
                 listTargetTodo_Init();
             }
-
-            listTargetDetail.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            if (listTargetDetail.Columns[1].Width < (16 * 15))
-                listTargetDetail.Columns[1].Width = 16 * 15;
-
-            listTargetTodo.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            if (listTargetTodo.Columns[1].Width < (16 * 15))
-                listTargetTodo.Columns[1].Width = 16 * 15;
-
         }
 
         /// <summary>
@@ -651,9 +766,32 @@ namespace SavedContentsManager
                 {
                     //Console.WriteLine("Cache Set " + listSource.SelectedItems[0].Text + " = " + textTargetName.Text);
                     // 소스와 타겟 이름이 다르면 매핑캐시에 저장
-                    nameMappingCache[listSource.SelectedItems[0].Text] = textTargetName.Text;
+                    using (SQLiteConnection conn = new SQLiteConnection(DataBaseUtils.getConnectionString()))
+                    {
+                        conn.Open();
+                        string[] info = _selectDatabase(conn, listSource.SelectedItems[0].Text);
+                        if (info == null)
+                        {
+                            SQLiteCommand insertCommand = conn.CreateCommand();
+                            insertCommand.CommandText = "INSERT INTO " + TABLE_NAME +
+                                " (SOURCE_NAME, TARGET_NAME, DELETE_YN) VALUES" +
+                                " (@SOURCE_NAME, @TARGET_NAME, @DELETE_YN)";
+                            insertCommand.Parameters.Add("@SOURCE_NAME", DbType.String, 200);
+                            insertCommand.Parameters.Add("@TARGET_NAME", DbType.String, 200);
+                            insertCommand.Parameters.Add("@DELETE_YN", DbType.String, 1);
+                            insertCommand.Prepare();
+
+                            insertCommand.Parameters["@SOURCE_NAME"].Value = listSource.SelectedItems[0].Text;
+                            insertCommand.Parameters["@TARGET_NAME"].Value = textTargetName.Text;
+                            insertCommand.Parameters["@DELETE_YN"].Value = "N";
+
+                            insertCommand.ExecuteNonQuery();
+                        }
+                    }
+
+                    //nameMappingCache[listSource.SelectedItems[0].Text] = textTargetName.Text;
                     // 저장
-                    nameMappingCache.Save(textTarget.Text, CACHE_FILE_NAME);
+                    //nameMappingCache.Save(textTarget.Text, CACHE_FILE_NAME);
                 }
 
                 // targetDirName 생성
@@ -675,18 +813,43 @@ namespace SavedContentsManager
                 {
                     //Console.WriteLine("Cache Set " + listSource.SelectedItems[0].Text + " = " + listTarget.SelectedItems[0].Text);
                     // 소스와 타겟 이름이 다르면 매핑캐시에 저장
-                    nameMappingCache[listSource.SelectedItems[0].Text] = listTarget.SelectedItems[0].Text;
+                    //nameMappingCache[listSource.SelectedItems[0].Text] = listTarget.SelectedItems[0].Text;
+                    using (SQLiteConnection conn = new SQLiteConnection(DataBaseUtils.getConnectionString()))
+                    {
+                        conn.Open();
+                        string[] info = _selectDatabase(conn, listSource.SelectedItems[0].Text);
+                        if (info == null)
+                        {
+                            SQLiteCommand insertCommand = conn.CreateCommand();
+                            insertCommand.CommandText = "INSERT INTO " + TABLE_NAME +
+                                " (SOURCE_NAME, TARGET_NAME, DELETE_YN) VALUES" +
+                                " (@SOURCE_NAME, @TARGET_NAME, @DELETE_YN)";
+                            insertCommand.Parameters.Add("@SOURCE_NAME", DbType.String, 200);
+                            insertCommand.Parameters.Add("@TARGET_NAME", DbType.String, 200);
+                            insertCommand.Parameters.Add("@DELETE_YN", DbType.String, 1);
+                            insertCommand.Prepare();
+
+                            insertCommand.Parameters["@SOURCE_NAME"].Value = listSource.SelectedItems[0].Text;
+                            insertCommand.Parameters["@SOURCE_NAME"].Value = listTarget.SelectedItems[0].Text;
+                            insertCommand.Parameters["@SOURCE_NAME"].Value = "N";
+
+                            insertCommand.ExecuteNonQuery();
+                        }
+
+                    }
                 }
+                /*
                 else
                 {
                     // 소스와 타겟이 동일하면 소스를 매핑캐시에서 삭제
-                    if (nameMappingCache.ContainsKey(listSource.SelectedItems[0].Text))
-                    {
+                    //if (nameMappingCache.ContainsKey(listSource.SelectedItems[0].Text))
+                    //{
                         //Console.WriteLine("Cache Remove " + listSource.SelectedItems[0].Text);
-                        nameMappingCache.Remove(listSource.SelectedItems[0].Text);
-                    }
+                        //nameMappingCache.Remove(listSource.SelectedItems[0].Text);
+                    //}
                 }
-                nameMappingCache.Save(textTarget.Text, CACHE_FILE_NAME);
+                */
+                //nameMappingCache.Save(textTarget.Text, CACHE_FILE_NAME);
             }
 
             //Console.WriteLine("btnProcessAll_Click Target dir : " + targetDirName);
@@ -894,9 +1057,56 @@ namespace SavedContentsManager
             //Console.WriteLine("Delete [" + srcItem.Name + "]");
 
             // 매핑캐시에 정의된 이름이 있으면 삭제
+            /*
             if (nameMappingCache.ContainsKey(listSource.SelectedItems[0].Text))
             {
                 nameMappingCache.Remove(listSource.SelectedItems[0].Text);
+            }
+            */
+            string[] mappingInfo = _selectDatabase(srcItem.Text);
+            if (mappingInfo != null)
+            {
+                // UPDATE
+                using (SQLiteConnection conn = new SQLiteConnection(DataBaseUtils.getConnectionString()))
+                {
+                    conn.Open();
+                    SQLiteCommand updateCommand = conn.CreateCommand();
+                    updateCommand.CommandText = "UPDATE " + TABLE_NAME +
+                        " SET TARGET_NAME = @TARGET_NAME, DELETE_YN = @DELETE_YN" +
+                        " WHERE SOURCE_NAME = @SOURCE_NAME";
+                    updateCommand.Parameters.Add("@TARGET_NAME", DbType.String, 200);
+                    updateCommand.Parameters.Add("@DELETE_YN", DbType.String, 1);
+                    updateCommand.Parameters.Add("@SOURCE_NAME", DbType.String, 200);
+                    updateCommand.Prepare();
+
+                    updateCommand.Parameters["@TARGET_NAME"].Value = srcItem.Text;
+                    updateCommand.Parameters["@DELETE_YN"].Value = "Y";
+                    updateCommand.Parameters["@SOURCE_NAME"].Value = srcItem.Text;
+
+                    updateCommand.ExecuteNonQuery();
+                }
+            }
+            else
+            {
+                // INSERT
+                using (SQLiteConnection conn = new SQLiteConnection(DataBaseUtils.getConnectionString()))
+                {
+                    conn.Open();
+                    SQLiteCommand insertCommand = conn.CreateCommand();
+                    insertCommand.CommandText = "INSERT INTO " + TABLE_NAME +
+                        " (SOURCE_NAME, TARGET_NAME, DELETE_YN) VALUES" +
+                        " (@SOURCE_NAME, @TARGET_NAME, @DELETE_YN)";
+                    insertCommand.Parameters.Add("@SOURCE_NAME", DbType.String, 200);
+                    insertCommand.Parameters.Add("@TARGET_NAME", DbType.String, 200);
+                    insertCommand.Parameters.Add("@DELETE_YN", DbType.String, 1);
+                    insertCommand.Prepare();
+
+                    insertCommand.Parameters["@SOURCE_NAME"].Value = srcItem.Text;
+                    insertCommand.Parameters["@TARGET_NAME"].Value = srcItem.Text;
+                    insertCommand.Parameters["@DELETE_YN"].Value = "Y";
+
+                    insertCommand.ExecuteNonQuery();
+                }
             }
 
             // 폴더 삭제

@@ -33,6 +33,9 @@ Download exe file and execute it
 
 ## Release History
 
+* 1.3.0
+    * 캐시파일을 XML에서 SQLite로 전환
+    * 리스트박스 표시 조정 색상표시(이동한 적 있는것=녹색,삭제한 적 있는것=적색)
 * 1.2.0
     * Console.WriteLine 삭제, 캐시 XML 파일을 SQLite DB로 변경
 * 1.1.4
