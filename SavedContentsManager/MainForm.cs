@@ -96,7 +96,7 @@ namespace SavedContentsManager
                 dataGridTitles.DataSource = contentsDirectory.DirectoryInfoView;
                 for (int i = 0; i < dataGridTitles.Columns.Count; i++)
                 {
-                    dataGridTitles.Columns[i].HeaderText = contentsDirectory.DirectoryInfoView.Table.Columns[dataGridTitles.Columns[i].HeaderText].Caption;
+                    dataGridTitles.Columns[i].HeaderText = contentsDirectory.DirectoryInfoView.Table.Columns[dataGridTitles.Columns[i].Name].Caption;
                 }
 
                 dataGridTitles.Columns["SUB_FOLDERS"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;

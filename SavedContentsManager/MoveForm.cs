@@ -257,6 +257,7 @@ namespace SavedContentsManager
             }
 
             listSource.EndUpdate();
+            textCount.Text = string.Format("{0:N0}", listSource.Items.Count);
         }
 
         /// <summary>
@@ -830,8 +831,8 @@ namespace SavedContentsManager
                             insertCommand.Prepare();
 
                             insertCommand.Parameters["@SOURCE_NAME"].Value = listSource.SelectedItems[0].Text;
-                            insertCommand.Parameters["@SOURCE_NAME"].Value = listTarget.SelectedItems[0].Text;
-                            insertCommand.Parameters["@SOURCE_NAME"].Value = "N";
+                            insertCommand.Parameters["@TARGET_NAME"].Value = listTarget.SelectedItems[0].Text;
+                            insertCommand.Parameters["@DELETE_YN"].Value = "N";
 
                             insertCommand.ExecuteNonQuery();
                         }

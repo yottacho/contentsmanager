@@ -60,6 +60,7 @@
             this.labelDesc2 = new System.Windows.Forms.Label();
             this.labelDesc3 = new System.Windows.Forms.Label();
             this.labelDesc4 = new System.Windows.Forms.Label();
+            this.textCount = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnSourceOpen
@@ -371,11 +372,21 @@
             this.labelDesc4.TabIndex = 35;
             this.labelDesc4.Text = "^D";
             // 
+            // textCount
+            // 
+            this.textCount.Location = new System.Drawing.Point(15, 44);
+            this.textCount.Name = "textCount";
+            this.textCount.ReadOnly = true;
+            this.textCount.Size = new System.Drawing.Size(42, 21);
+            this.textCount.TabIndex = 36;
+            this.textCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
             // MoveForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(971, 480);
+            this.Controls.Add(this.textCount);
             this.Controls.Add(this.labelDesc4);
             this.Controls.Add(this.labelDesc3);
             this.Controls.Add(this.labelDesc2);
@@ -454,5 +465,6 @@
         private System.Windows.Forms.Label labelDesc2;
         private System.Windows.Forms.Label labelDesc3;
         private System.Windows.Forms.Label labelDesc4;
+        private System.Windows.Forms.TextBox textCount;
     }
 }
