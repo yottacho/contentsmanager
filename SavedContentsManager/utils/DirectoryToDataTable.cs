@@ -202,7 +202,18 @@ namespace SavedContentsManager.utils
 
         private void DifferentCheck(string parent, string startDir)
         {
-            DirectoryInfo[] dirList = new DirectoryInfo(startDir).GetDirectories();
+            //System.IO.DirectoryNotFoundException
+            DirectoryInfo[] dirList = null;
+
+            try
+            {
+                dirList = new DirectoryInfo(startDir).GetDirectories();
+            }
+            catch (DirectoryNotFoundException)
+            {
+                MessageBox.Show("지정한 폴더를 찾을 수 없습니다");
+                return;
+            }
 
             // new or updated directory to cache
             int total = dirList.Length;

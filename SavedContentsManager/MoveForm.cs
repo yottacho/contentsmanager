@@ -788,6 +788,21 @@ namespace SavedContentsManager
 
                             insertCommand.ExecuteNonQuery();
                         }
+                        else
+                        {
+                            SQLiteCommand updateCommand = conn.CreateCommand();
+                            updateCommand.CommandText = "UPDATE " + TABLE_NAME +
+                                " SET DELETE_YN = 'N' WHERE SOURCE_NAME = @SOURCE_NAME AND TARGET_NAME = @TARGET_NAME";
+                            updateCommand.Parameters.Add("@SOURCE_NAME", DbType.String, 200);
+                            updateCommand.Parameters.Add("@TARGET_NAME", DbType.String, 200);
+                            updateCommand.Prepare();
+
+                            updateCommand.Parameters["@SOURCE_NAME"].Value = listSource.SelectedItems[0].Text;
+                            updateCommand.Parameters["@TARGET_NAME"].Value = textTargetName.Text;
+
+                            updateCommand.ExecuteNonQuery();
+
+                        }
                     }
 
                     //nameMappingCache[listSource.SelectedItems[0].Text] = textTargetName.Text;
@@ -835,6 +850,21 @@ namespace SavedContentsManager
                             insertCommand.Parameters["@DELETE_YN"].Value = "N";
 
                             insertCommand.ExecuteNonQuery();
+                        }
+                        else
+                        {
+                            SQLiteCommand updateCommand = conn.CreateCommand();
+                            updateCommand.CommandText = "UPDATE " + TABLE_NAME +
+                                " SET DELETE_YN = 'N' WHERE SOURCE_NAME = @SOURCE_NAME AND TARGET_NAME = @TARGET_NAME";
+                            updateCommand.Parameters.Add("@SOURCE_NAME", DbType.String, 200);
+                            updateCommand.Parameters.Add("@TARGET_NAME", DbType.String, 200);
+                            updateCommand.Prepare();
+
+                            updateCommand.Parameters["@SOURCE_NAME"].Value = listSource.SelectedItems[0].Text;
+                            updateCommand.Parameters["@TARGET_NAME"].Value = textTargetName.Text;
+
+                            updateCommand.ExecuteNonQuery();
+
                         }
 
                     }

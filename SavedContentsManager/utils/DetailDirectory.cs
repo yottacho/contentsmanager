@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace SavedContentsManager.utils
 {
@@ -23,7 +24,17 @@ namespace SavedContentsManager.utils
         {
             Directories = new List<NameStructure>();
 
-            DirectoryInfo[] dirList = new DirectoryInfo(basePath).GetDirectories();
+            DirectoryInfo[] dirList = null;
+            try
+            {
+                dirList = new DirectoryInfo(basePath).GetDirectories();
+            }
+            catch (DirectoryNotFoundException)
+            {
+                MessageBox.Show("지정한 폴더를 찾을 수 없습니다.");
+                return;
+            }
+            
             Array.Sort(dirList, (x, y) =>
             {
                 DirectoryInfo xx = x as DirectoryInfo;
