@@ -901,6 +901,8 @@ namespace SavedContentsManager
             bw.WorkerReportsProgress = true;
             bw.RunWorkerAsync();
             // ---------------------
+
+            textTargetSearch.Text = "";
         }
 
         /// <summary>
@@ -1150,6 +1152,8 @@ namespace SavedContentsManager
             {
                 MessageBox.Show("디렉터리를 삭제할 수 없습니다. [" + srcItem.Name + "]\n사유: " + ee.Message);
             }
+
+            textTargetSearch.Text = "";
 
             // 소스폴더 리프레시
             listSource.Items.Clear();
