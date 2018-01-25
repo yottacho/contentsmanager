@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btnSourceOpen = new System.Windows.Forms.Button();
             this.btnSourceBrowse = new System.Windows.Forms.Button();
             this.comboSourceFolder = new System.Windows.Forms.ComboBox();
@@ -61,6 +62,7 @@
             this.labelDesc3 = new System.Windows.Forms.Label();
             this.labelDesc4 = new System.Windows.Forms.Label();
             this.textCount = new System.Windows.Forms.TextBox();
+            this.listSourceContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.SuspendLayout();
             // 
             // btnSourceOpen
@@ -121,6 +123,7 @@
             // 
             // listSource
             // 
+            this.listSource.ContextMenuStrip = this.listSourceContextMenu;
             this.listSource.FullRowSelect = true;
             this.listSource.GridLines = true;
             this.listSource.HideSelection = false;
@@ -381,6 +384,12 @@
             this.textCount.TabIndex = 36;
             this.textCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
+            // listSourceContextMenu
+            // 
+            this.listSourceContextMenu.Name = "listSourceContextMenu";
+            this.listSourceContextMenu.Size = new System.Drawing.Size(153, 26);
+            this.listSourceContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.listSourceContextMenu_Opening);
+            // 
             // MoveForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -466,5 +475,6 @@
         private System.Windows.Forms.Label labelDesc3;
         private System.Windows.Forms.Label labelDesc4;
         private System.Windows.Forms.TextBox textCount;
+        private System.Windows.Forms.ContextMenuStrip listSourceContextMenu;
     }
 }

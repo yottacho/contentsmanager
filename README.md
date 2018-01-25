@@ -33,6 +33,8 @@ Download exe file and execute it
 
 ## Release History
 
+* 1.3.1
+    * MoveForm에서 우클릭 메뉴로 단어 검색할 수 있도록 추가
 * 1.3.0
     * 캐시파일을 XML에서 SQLite로 전환
     * 리스트박스 표시 조정 색상표시(이동한 적 있는것=녹색,삭제한 적 있는것=적색)

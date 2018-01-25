@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -585,6 +586,8 @@ namespace SavedContentsManager
 
             textTargetName.ReadOnly = false;
             textTargetName.Text = "";
+            textTargetSearch.Text = "";
+            listTarget_Init();
 
             listSourceDetail_Init(dirPathName);
 
@@ -1154,6 +1157,7 @@ namespace SavedContentsManager
             }
 
             textTargetSearch.Text = "";
+            listTarget_Init();
 
             // 소스폴더 리프레시
             listSource.Items.Clear();
@@ -1388,6 +1392,38 @@ namespace SavedContentsManager
                     e.SuppressKeyPress = false;
                 }
             }
+        }
+
+        private void listSourceContextMenu_Opening(object sender, CancelEventArgs e)
+        {
+            // 오른쪽 버튼 클릭했을 때 폴더명을 단어단위로 쪼개서 검색
+            if (listSource.SelectedItems.Count == 0)
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            string titleName = listSource.SelectedItems[0].Text;
+            Debug.WriteLine("[" + titleName + "]");
+
+            listSourceContextMenu.Items.Clear();
+
+            string[] words = titleName.Split(' ');
+            foreach (string word in words)
+            {
+                ToolStripItem stripItem = new ToolStripMenuItem(word);
+                stripItem.Tag = word;
+                stripItem.Click += (s2, e2) =>
+                {
+                    ToolStripItem itm = s2 as ToolStripItem;
+                    string tag = (string)itm.Tag;
+
+                    Debug.WriteLine("Tag=>" + tag);
+                    listTarget_Init(tag);
+                };
+                listSourceContextMenu.Items.Add(stripItem);
+            }
+
         }
     }
 }
