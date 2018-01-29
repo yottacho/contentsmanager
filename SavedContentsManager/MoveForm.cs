@@ -588,6 +588,7 @@ namespace SavedContentsManager
             textTargetName.Text = "";
             textTargetSearch.Text = "";
             listTarget_Init();
+            listTargetDetail.Items.Clear();
 
             listSourceDetail_Init(dirPathName);
 
