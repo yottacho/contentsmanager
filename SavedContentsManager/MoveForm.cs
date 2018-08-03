@@ -1392,6 +1392,12 @@ namespace SavedContentsManager
                     e.Handled = true;
                     e.SuppressKeyPress = false;
                 }
+                if ((e.KeyCode == Keys.R))
+                {
+                    btnRefreshSource_Click(sender, null);
+                    e.Handled = true;
+                    e.SuppressKeyPress = false;
+                }
             }
         }
 
