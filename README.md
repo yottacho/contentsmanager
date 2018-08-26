@@ -33,6 +33,8 @@ Download exe file and execute it
 
 ## Release History
 
+* 1.3.4
+    * bug fix
 * 1.3.3
     * MoveForm에 Ctrl-R 단축키 추가
 * 1.3.2

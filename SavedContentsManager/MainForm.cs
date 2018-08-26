@@ -285,7 +285,15 @@ namespace SavedContentsManager
             else
             {
                 txtSearch.Text = "";
-                contentsDirectory.DifferentCheck();
+
+                try
+                {
+                    contentsDirectory.DifferentCheck();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
 
                 dataGridTitles.AutoResizeColumns();
             }

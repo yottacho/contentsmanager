@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -264,7 +265,14 @@ namespace SavedContentsManager.utils
                 {
                     if (foundRows.Length > 1)
                     {
-                        throw new Exception("Duplicated entry!");
+                        string entryName = dirName + "=";
+                        foreach (DataRow r in foundRows)
+                        {
+                            entryName += r["TITLE_NAME"].ToString() + ",";
+                        }
+
+                        Debug.WriteLine("Duplicate Entry => " + entryName );
+                        throw new Exception("Duplicated entry! " + entryName);
                     }
 
                     if (!lastDate.Equals(foundRows[0]["LAST_UPDATED"]))
