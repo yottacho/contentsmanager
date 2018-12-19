@@ -308,12 +308,14 @@ namespace SavedContentsManager
         private void dataGridTitles_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             string title = "";
-            if (e != null)
+            if (e != null && e.RowIndex >= 0)
                 title = dataGridTitles.Rows[e.RowIndex].Cells["TITLE_NAME"].Value.ToString();
+            /*
             else if (dataGridTitles.SelectedRows.Count > 0)
                 title = dataGridTitles.SelectedRows[0].Cells["TITLE_NAME"].Value.ToString();
             else if (dataGridTitles.Rows.Count > 0)
                 title = dataGridTitles.Rows[0].Cells["TITLE_NAME"].Value.ToString();
+            */
 
             if (title.Length > 0)
             {
