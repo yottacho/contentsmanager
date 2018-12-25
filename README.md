@@ -33,6 +33,8 @@ Download exe file and execute it
 
 ## Release History
 
+* 1.3.6
+    * UI 개선
 * 1.3.5
     * 컬럼 타이틀 클릭할 때 더블클릭으로 인식해서 생기는 오류 수정
 * 1.3.4

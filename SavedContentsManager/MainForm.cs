@@ -195,7 +195,7 @@ namespace SavedContentsManager
             else if (e.KeyCode == Keys.Enter)
             {
                 // 검색결과 첫번째 항목으로 이동
-                dataGridTitles_CellDoubleClick(sender, null);
+                dataGridTitles_CellDoubleClick(null, null);
                 e.Handled = true;
             }
             else if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down)
@@ -267,7 +267,13 @@ namespace SavedContentsManager
             }
 
             dataGridTitles.Columns["SUB_FOLDERS"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+
             dataGridTitles.AutoResizeColumns();
+            dataGridTitles.FirstDisplayedScrollingRowIndex = 0;
+            dataGridTitles.FirstDisplayedScrollingColumnIndex = 0;
+            if (dataGridTitles.Rows.Count > 0)
+                dataGridTitles.CurrentCell = dataGridTitles.Rows[0].Cells[0];
+
         }
 
         /// <summary>
@@ -285,6 +291,7 @@ namespace SavedContentsManager
             else
             {
                 txtSearch.Text = "";
+                dataGridTitles.ClearSelection();
 
                 try
                 {
@@ -296,6 +303,11 @@ namespace SavedContentsManager
                 }
 
                 dataGridTitles.AutoResizeColumns();
+                dataGridTitles.FirstDisplayedScrollingRowIndex = 0;
+                dataGridTitles.FirstDisplayedScrollingColumnIndex = 0;
+                if (dataGridTitles.Rows.Count > 0)
+                    dataGridTitles.CurrentCell = dataGridTitles.Rows[0].Cells[0];
+
             }
             this.Cursor = this.DefaultCursor;
         }
@@ -310,12 +322,15 @@ namespace SavedContentsManager
             string title = "";
             if (e != null && e.RowIndex >= 0)
                 title = dataGridTitles.Rows[e.RowIndex].Cells["TITLE_NAME"].Value.ToString();
-            /*
-            else if (dataGridTitles.SelectedRows.Count > 0)
-                title = dataGridTitles.SelectedRows[0].Cells["TITLE_NAME"].Value.ToString();
-            else if (dataGridTitles.Rows.Count > 0)
-                title = dataGridTitles.Rows[0].Cells["TITLE_NAME"].Value.ToString();
-            */
+
+            // 제목 검색 후 엔터키 쳤을 경우... 첫번째 항목
+            if (sender == null && e == null)
+            {
+                if (dataGridTitles.SelectedRows.Count > 0)
+                    title = dataGridTitles.SelectedRows[0].Cells["TITLE_NAME"].Value.ToString();
+                else if (dataGridTitles.Rows.Count > 0)
+                    title = dataGridTitles.Rows[0].Cells["TITLE_NAME"].Value.ToString();
+            }
 
             if (title.Length > 0)
             {
