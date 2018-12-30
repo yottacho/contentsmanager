@@ -33,6 +33,8 @@ Download exe file and execute it
 
 ## Release History
 
+* 1.3.7
+    * 압축파일 처리 추가
 * 1.3.6
     * UI 개선
 * 1.3.5

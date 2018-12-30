@@ -7,6 +7,7 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -189,11 +190,61 @@ namespace SavedContentsManager
         /// </summary>
         private void listSource_Init()
         {
-
+            DirectoryInfo pathInfo = new DirectoryInfo(comboSourceFolder.Text);
             DirectoryInfo[] dirList;
+
+            // zip 파일이 있으면 자동압축 해제
             try
             {
-                dirList = new DirectoryInfo(comboSourceFolder.Text).GetDirectories();
+                FileInfo[] zipList = pathInfo.GetFiles("*.zip");
+
+                string dirName = pathInfo.Name;
+                Debug.WriteLine("zip check: dirName :" + dirName);
+
+                foreach (FileInfo zip in zipList)
+                {
+                    Debug.WriteLine(">  zip check: zipFile: " + zip.Name);
+
+                    string extractDir = Path.Combine(pathInfo.FullName, zip.Name.Substring(0, zip.Name.LastIndexOf(".zip")));
+                    Debug.WriteLine(">  zip check: extractDir: " + extractDir);
+
+                    if (Directory.Exists(extractDir))
+                    {
+                        Debug.WriteLine("> extract dir already exist");
+
+                        if (MessageBox.Show("[" + zip.Name + "]이 이미 [" +
+                            zip.Name.Substring(0, zip.Name.LastIndexOf(".zip")) +
+                            "] 이름으로 있습니다. 삭제할까요?", "삭제", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        {
+                            // zip 파일 삭제
+                            zip.Delete();
+                        }
+
+                        // 이미 존재함 - 생략
+                        continue;
+                    }
+
+                    // 생성
+                    Directory.CreateDirectory(extractDir);
+
+                    // 압축 해제
+                    ZipFile.ExtractToDirectory(zip.FullName, extractDir);
+
+                    // 디렉터리 접근일시 변경
+                    new DirectoryInfo(extractDir).LastWriteTime = zip.LastWriteTime;
+
+                    // zip 파일 삭제
+                    zip.Delete();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("zip check error! " + ex.Message);
+            }
+
+            try
+            {
+                dirList = pathInfo.GetDirectories();
             }
             catch (Exception e)
             {
@@ -266,10 +317,62 @@ namespace SavedContentsManager
         /// </summary>
         private void listSourceDetail_Init(string path)
         {
+            DirectoryInfo pathInfo = new DirectoryInfo(path);
             DirectoryInfo[] dirList;
+
+            // zip 파일이 있으면 자동압축 해제
             try
             {
-                dirList = new DirectoryInfo(path).GetDirectories();
+                FileInfo[] zipList = pathInfo.GetFiles("*.zip");
+
+                string dirName = pathInfo.Name;
+                Debug.WriteLine("zip check: dirName :" + dirName);
+
+                foreach (FileInfo zip in zipList)
+                {
+                    Debug.WriteLine(">  zip check: zipFile: " + zip.Name);
+
+                    string extractDir = Path.Combine(path, dirName.Trim() + " " + zip.Name.Substring(0, zip.Name.LastIndexOf(".zip")));
+                    Debug.WriteLine(">  zip check: extractDir: " + extractDir);
+
+                    if (Directory.Exists(extractDir))
+                    {
+                        Debug.WriteLine("> extract dir already exist");
+
+                        if (MessageBox.Show("[" + zip.Name + "]이 이미 [" +
+                            dirName.Trim() + " " + zip.Name.Substring(0, zip.Name.LastIndexOf(".zip")) +
+                            "] 이름으로 있습니다. 삭제할까요?", "삭제", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        {
+                            // zip 파일 삭제
+                            zip.Delete();
+                        }
+
+                        // 이미 존재함 - 생략
+                        continue;
+                    }
+
+                    // 생성
+                    Directory.CreateDirectory(extractDir);
+
+                    // 압축 해제
+                    ZipFile.ExtractToDirectory(zip.FullName, extractDir);
+
+                    // 디렉터리 접근일시 변경
+                    new DirectoryInfo(extractDir).LastWriteTime = zip.LastWriteTime;
+
+                    // zip 파일 삭제
+                    zip.Delete();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("zip check error! " + ex.Message);
+            }
+
+
+            try
+            {
+                dirList = pathInfo.GetDirectories();
             }
             catch (DirectoryNotFoundException)
             {
