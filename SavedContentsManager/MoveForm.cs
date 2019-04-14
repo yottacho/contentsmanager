@@ -1,4 +1,6 @@
-﻿using SavedContentsManager.utils;
+﻿using ImageProcessor;
+using ImageProcessor.Imaging.Formats;
+using SavedContentsManager.utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -1065,7 +1067,41 @@ namespace SavedContentsManager
 
                         worker.ReportProgress(p);
 
-                        f.MoveTo(targetName + Path.DirectorySeparatorChar + f.Name);
+                        // webp 파일을 jpg로 변환
+                        if (f.Extension.ToLower().Equals(".webp"))
+                        {
+                            string targetFileName = targetName + Path.DirectorySeparatorChar + f.Name;
+                            targetFileName = targetFileName.Substring(0, targetFileName.LastIndexOf('.')) + ".jpg";
+
+                            FormatBase imageFormat = new JpegFormat();
+                            imageFormat.Quality = 95;
+
+                            byte[] source = File.ReadAllBytes(f.FullName);
+                            using (MemoryStream inStream = new MemoryStream(source))
+                            using (MemoryStream outStream = new MemoryStream())
+                            using (ImageFactory imageFactory = new ImageFactory())
+                            {
+                                imageFactory.Load(inStream)
+                                            .Format(imageFormat)
+                                            .Save(outStream);
+
+                                File.WriteAllBytes(targetFileName, outStream.GetBuffer());
+                            }
+                            FileInfo target = new FileInfo(targetFileName);
+                            target.LastWriteTime = f.LastWriteTime;
+
+                            f.Delete();
+                        }
+                        // 불필요한 파일은 이동하지 않고 삭제
+                        else if (f.Name.ToLower().Equals("downloaded from.txt"))
+                        {
+                            f.Delete();
+                        }
+                        else
+                        {
+                            f.MoveTo(targetName + Path.DirectorySeparatorChar + f.Name);
+                        }
+
                     }
 
                     // 디렉터리 생성시각 일치

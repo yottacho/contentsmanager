@@ -31,12 +31,14 @@ namespace SavedContentsManager.utils
         {
             this.sourceDirectory = sourceDirectory.Replace('\\', '/');
 
+            Debug.WriteLine("Init...");
             init();
+            Debug.WriteLine("Init ok...");
 
             if (directoryInfo != null && DirectoryInfoView == null)
             {
                 DirectoryInfoView = new DataView(directoryInfo);
-                DirectoryInfoView.Sort = "[TITLE_NAME] ASC";
+                DirectoryInfoView.Sort = "[LAST_UPDATED] DESC";
             }
 
         }

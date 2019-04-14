@@ -104,6 +104,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPageFolder);
             this.tabControl1.Controls.Add(this.tabPageDetail);
+            this.tabControl1.Font = new System.Drawing.Font("굴림", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.tabControl1.Location = new System.Drawing.Point(12, 42);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -119,10 +120,10 @@
             this.tabPageFolder.Controls.Add(this.label2);
             this.tabPageFolder.Controls.Add(this.txtSearch);
             this.tabPageFolder.Controls.Add(this.dataGridTitles);
-            this.tabPageFolder.Location = new System.Drawing.Point(4, 22);
+            this.tabPageFolder.Location = new System.Drawing.Point(4, 25);
             this.tabPageFolder.Name = "tabPageFolder";
             this.tabPageFolder.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageFolder.Size = new System.Drawing.Size(793, 457);
+            this.tabPageFolder.Size = new System.Drawing.Size(793, 454);
             this.tabPageFolder.TabIndex = 0;
             this.tabPageFolder.Text = "Titles";
             this.tabPageFolder.UseVisualStyleBackColor = true;
@@ -136,6 +137,7 @@
             // 
             // btnRefresh
             // 
+            this.btnRefresh.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.btnRefresh.Location = new System.Drawing.Point(629, 6);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(75, 23);
@@ -146,6 +148,7 @@
             // 
             // btnRefreshAll
             // 
+            this.btnRefreshAll.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.btnRefreshAll.Location = new System.Drawing.Point(710, 6);
             this.btnRefreshAll.Name = "btnRefreshAll";
             this.btnRefreshAll.Size = new System.Drawing.Size(75, 23);
@@ -157,6 +160,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label2.Location = new System.Drawing.Point(6, 11);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(73, 12);
@@ -165,6 +169,7 @@
             // 
             // txtSearch
             // 
+            this.txtSearch.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.txtSearch.Location = new System.Drawing.Point(82, 6);
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(167, 21);
@@ -187,7 +192,7 @@
             this.dataGridTitles.ReadOnly = true;
             this.dataGridTitles.RowTemplate.Height = 23;
             this.dataGridTitles.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridTitles.Size = new System.Drawing.Size(782, 418);
+            this.dataGridTitles.Size = new System.Drawing.Size(782, 415);
             this.dataGridTitles.TabIndex = 3;
             this.dataGridTitles.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridTitles_CellDoubleClick);
             this.dataGridTitles.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridTitles_KeyDown);
@@ -203,16 +208,17 @@
             this.tabPageDetail.Controls.Add(this.label3);
             this.tabPageDetail.Controls.Add(this.txtTitle);
             this.tabPageDetail.Controls.Add(this.listDetail);
-            this.tabPageDetail.Location = new System.Drawing.Point(4, 22);
+            this.tabPageDetail.Location = new System.Drawing.Point(4, 25);
             this.tabPageDetail.Name = "tabPageDetail";
             this.tabPageDetail.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDetail.Size = new System.Drawing.Size(793, 457);
+            this.tabPageDetail.Size = new System.Drawing.Size(793, 454);
             this.tabPageDetail.TabIndex = 1;
             this.tabPageDetail.Text = "Details";
             this.tabPageDetail.UseVisualStyleBackColor = true;
             // 
             // btnOpenDetail
             // 
+            this.btnOpenDetail.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.btnOpenDetail.Location = new System.Drawing.Point(422, 13);
             this.btnOpenDetail.Name = "btnOpenDetail";
             this.btnOpenDetail.Size = new System.Drawing.Size(75, 23);
@@ -224,7 +230,8 @@
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.Location = new System.Drawing.Point(712, 428);
+            this.btnCancel.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.btnCancel.Location = new System.Drawing.Point(712, 425);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 7;
@@ -235,7 +242,8 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(596, 428);
+            this.btnSave.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.btnSave.Location = new System.Drawing.Point(596, 425);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 6;
@@ -246,7 +254,8 @@
             // btnRemapping
             // 
             this.btnRemapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRemapping.Location = new System.Drawing.Point(515, 428);
+            this.btnRemapping.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.btnRemapping.Location = new System.Drawing.Point(515, 425);
             this.btnRemapping.Name = "btnRemapping";
             this.btnRemapping.Size = new System.Drawing.Size(75, 23);
             this.btnRemapping.TabIndex = 5;
@@ -257,7 +266,8 @@
             // btnDown
             // 
             this.btnDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDown.Location = new System.Drawing.Point(408, 428);
+            this.btnDown.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.btnDown.Location = new System.Drawing.Point(408, 425);
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(75, 23);
             this.btnDown.TabIndex = 4;
@@ -268,7 +278,8 @@
             // btnUp
             // 
             this.btnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUp.Location = new System.Drawing.Point(312, 428);
+            this.btnUp.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.btnUp.Location = new System.Drawing.Point(312, 425);
             this.btnUp.Name = "btnUp";
             this.btnUp.Size = new System.Drawing.Size(75, 23);
             this.btnUp.TabIndex = 3;
@@ -279,6 +290,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label3.Location = new System.Drawing.Point(6, 18);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(29, 12);
@@ -287,6 +299,7 @@
             // 
             // txtTitle
             // 
+            this.txtTitle.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.txtTitle.Location = new System.Drawing.Point(41, 15);
             this.txtTitle.Name = "txtTitle";
             this.txtTitle.ReadOnly = true;
@@ -298,13 +311,14 @@
             this.listDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.listDetail.Font = new System.Drawing.Font("굴림", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.listDetail.FullRowSelect = true;
             this.listDetail.GridLines = true;
             this.listDetail.HideSelection = false;
             this.listDetail.Location = new System.Drawing.Point(6, 42);
             this.listDetail.MultiSelect = false;
             this.listDetail.Name = "listDetail";
-            this.listDetail.Size = new System.Drawing.Size(781, 380);
+            this.listDetail.Size = new System.Drawing.Size(781, 377);
             this.listDetail.TabIndex = 0;
             this.listDetail.UseCompatibleStateImageBehavior = false;
             this.listDetail.View = System.Windows.Forms.View.Details;

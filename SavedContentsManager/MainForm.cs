@@ -40,7 +40,7 @@ namespace SavedContentsManager
                 File.Copy(dbFile, dbFile + ".bak", true);
             }
 
-            Application.Idle += initialize;
+            Application.Idle += Initialize;
         }
 
         /// <summary>
@@ -48,12 +48,12 @@ namespace SavedContentsManager
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void initialize(object sender, EventArgs e)
+        private void Initialize(object sender, EventArgs e)
         {
-            Application.Idle -= initialize;
+            Application.Idle -= Initialize;
 
             comboContentsFolder.Items.Clear();
-            comboContentsFolder.Items.AddRange(Configure.getContentsHistory());
+            comboContentsFolder.Items.AddRange((object[]) Configure.getContentsHistory());
             comboContentsFolder.Text = Configure.LastSelectedContentsFolder;
 
             tabControl1.SelectedIndex = 0;
@@ -83,6 +83,7 @@ namespace SavedContentsManager
 
                 try
                 {
+                    // 시간을 끄는 작업
                     contentsDirectory = new DirectoryToDataTable(comboContentsFolder.Text);
                 }
                 catch (Exception e)
@@ -98,6 +99,8 @@ namespace SavedContentsManager
                 {
                     dataGridTitles.Columns[i].HeaderText = contentsDirectory.DirectoryInfoView.Table.Columns[dataGridTitles.Columns[i].Name].Caption;
                 }
+
+                dataGridTitles.Font = new Font("굴림", 9.0f);
 
                 dataGridTitles.Columns["SUB_FOLDERS"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
                 dataGridTitles.AutoResizeColumns();
