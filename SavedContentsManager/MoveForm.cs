@@ -1505,7 +1505,7 @@ namespace SavedContentsManager
         /// <param name="e"></param>
         private void MoveForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Control)
+            if (e.Control || e.Alt)
             {
                 if (e.KeyCode == Keys.Up)
                 {

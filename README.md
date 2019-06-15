@@ -33,9 +33,11 @@ Download exe file and execute it
 
 ## Release History
 
+* 1.4.1
+    * 단축키로 Alt를 눌러도 동작하도록 개선
 * 1.4.0
     * webp 파일을 jpg로 자동 변환 (VC++ 2013 재배포 패키지 필요)
-	* 파일 이동시 불필요한 정보파일 이동 제외(Downloaded from.txt)
+    * 파일 이동시 불필요한 정보파일 이동 제외(Downloaded from.txt)
 * 1.3.7
     * 압축파일 처리 추가
 * 1.3.6
