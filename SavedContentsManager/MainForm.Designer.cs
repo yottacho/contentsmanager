@@ -348,6 +348,7 @@
             this.Controls.Add(this.label1);
             this.DoubleBuffered = true;
             this.Name = "SavedContentsManager";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Saved Contents Manager";
             this.tabControl1.ResumeLayout(false);
             this.tabPageFolder.ResumeLayout(false);

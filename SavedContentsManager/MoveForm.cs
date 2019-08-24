@@ -408,6 +408,11 @@ namespace SavedContentsManager
             }
 
             listSourceDetail.EndUpdate();
+
+            listSourceDetail.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            if (listSourceDetail.Columns[0].Width < (16 * 15))
+                listSourceDetail.Columns[0].Width = 16 * 15;
+
         }
 
         /// <summary>
@@ -445,6 +450,8 @@ namespace SavedContentsManager
 
             if (search != null && search.Length > 0)
                 contentsDirectory.DirectoryInfoView.RowFilter = "[TITLE_NAME] LIKE '%" + search + "%'";
+
+            contentsDirectory.DirectoryInfoView.Sort = "[TITLE_NAME] ASC";
 
             foreach (DataRowView dir in contentsDirectory.DirectoryInfoView)
             {
@@ -1534,6 +1541,18 @@ namespace SavedContentsManager
                 if ((e.KeyCode == Keys.R))
                 {
                     btnRefreshSource_Click(sender, null);
+                    e.Handled = true;
+                    e.SuppressKeyPress = false;
+                }
+
+                if ((e.KeyCode == Keys.C))
+                {
+                    if (listSourceDetail.Items.Count == 0 || listSourceDetail.SelectedItems.Count == 0)
+                        return;
+
+                    ListViewItem item = listSourceDetail.SelectedItems[0];
+                    Clipboard.SetText(item.Text);
+
                     e.Handled = true;
                     e.SuppressKeyPress = false;
                 }

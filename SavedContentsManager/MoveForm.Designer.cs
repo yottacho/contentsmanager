@@ -36,6 +36,7 @@
             this.btnTargetOpen = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.listSource = new System.Windows.Forms.ListView();
+            this.listSourceContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.listSourceDetail = new System.Windows.Forms.ListView();
             this.listTarget = new System.Windows.Forms.ListView();
             this.listTargetDetail = new System.Windows.Forms.ListView();
@@ -62,7 +63,6 @@
             this.labelDesc3 = new System.Windows.Forms.Label();
             this.labelDesc4 = new System.Windows.Forms.Label();
             this.textCount = new System.Windows.Forms.TextBox();
-            this.listSourceContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.SuspendLayout();
             // 
             // btnSourceOpen
@@ -136,6 +136,12 @@
             this.listSource.View = System.Windows.Forms.View.Details;
             this.listSource.SelectedIndexChanged += new System.EventHandler(this.listSource_SelectedIndexChanged);
             this.listSource.DoubleClick += new System.EventHandler(this.listSource_DoubleClick);
+            // 
+            // listSourceContextMenu
+            // 
+            this.listSourceContextMenu.Name = "listSourceContextMenu";
+            this.listSourceContextMenu.Size = new System.Drawing.Size(61, 4);
+            this.listSourceContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.listSourceContextMenu_Opening);
             // 
             // listSourceDetail
             // 
@@ -384,12 +390,6 @@
             this.textCount.TabIndex = 36;
             this.textCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // listSourceContextMenu
-            // 
-            this.listSourceContextMenu.Name = "listSourceContextMenu";
-            this.listSourceContextMenu.Size = new System.Drawing.Size(153, 26);
-            this.listSourceContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.listSourceContextMenu_Opening);
-            // 
             // MoveForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -432,7 +432,7 @@
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.Name = "MoveForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Contents Manage";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MoveForm_KeyDown);
             this.ResumeLayout(false);
