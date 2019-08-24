@@ -410,8 +410,8 @@ namespace SavedContentsManager
             listSourceDetail.EndUpdate();
 
             listSourceDetail.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            if (listSourceDetail.Columns[0].Width < (16 * 15))
-                listSourceDetail.Columns[0].Width = 16 * 15;
+            if (listSourceDetail.Columns[0].Width < (18 * 15))
+                listSourceDetail.Columns[0].Width = 18 * 15;
 
         }
 
@@ -1551,7 +1551,7 @@ namespace SavedContentsManager
                         return;
 
                     ListViewItem item = listSourceDetail.SelectedItems[0];
-                    Clipboard.SetText(item.Text);
+                    Clipboard.SetText(item.Text + "\r\n" + item.SubItems[1].Text);
 
                     e.Handled = true;
                     e.SuppressKeyPress = false;

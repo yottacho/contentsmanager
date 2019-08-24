@@ -33,7 +33,7 @@ Download exe file and execute it
 
 ## Release History
 
-* 1.4.3
+* 1.4.3.1
     * MoveForm UI개선: 상세창 크기 자동조절 및 항목명 복사기능 추가
 * 1.4.2
     * 이동창에서 정렬기준 변경
