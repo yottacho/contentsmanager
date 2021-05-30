@@ -63,6 +63,8 @@
             this.labelDesc3 = new System.Windows.Forms.Label();
             this.labelDesc4 = new System.Windows.Forms.Label();
             this.textCount = new System.Windows.Forms.TextBox();
+            this.btnUp2Top = new System.Windows.Forms.Button();
+            this.btnDown2Bottom = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnSourceOpen
@@ -245,7 +247,7 @@
             // 
             // btnDown
             // 
-            this.btnDown.Location = new System.Drawing.Point(239, 417);
+            this.btnDown.Location = new System.Drawing.Point(227, 417);
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(75, 23);
             this.btnDown.TabIndex = 21;
@@ -390,11 +392,33 @@
             this.textCount.TabIndex = 36;
             this.textCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
+            // btnUp2Top
+            // 
+            this.btnUp2Top.Location = new System.Drawing.Point(102, 417);
+            this.btnUp2Top.Name = "btnUp2Top";
+            this.btnUp2Top.Size = new System.Drawing.Size(32, 23);
+            this.btnUp2Top.TabIndex = 37;
+            this.btnUp2Top.Text = "▲";
+            this.btnUp2Top.UseVisualStyleBackColor = true;
+            this.btnUp2Top.Click += new System.EventHandler(this.btnUp2Top_Click);
+            // 
+            // btnDown2Bottom
+            // 
+            this.btnDown2Bottom.Location = new System.Drawing.Point(308, 417);
+            this.btnDown2Bottom.Name = "btnDown2Bottom";
+            this.btnDown2Bottom.Size = new System.Drawing.Size(32, 23);
+            this.btnDown2Bottom.TabIndex = 38;
+            this.btnDown2Bottom.Text = "▼";
+            this.btnDown2Bottom.UseVisualStyleBackColor = true;
+            this.btnDown2Bottom.Click += new System.EventHandler(this.btnDown2Bottom_Click);
+            // 
             // MoveForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(971, 480);
+            this.Controls.Add(this.btnDown2Bottom);
+            this.Controls.Add(this.btnUp2Top);
             this.Controls.Add(this.textCount);
             this.Controls.Add(this.labelDesc4);
             this.Controls.Add(this.labelDesc3);
@@ -476,5 +500,7 @@
         private System.Windows.Forms.Label labelDesc4;
         private System.Windows.Forms.TextBox textCount;
         private System.Windows.Forms.ContextMenuStrip listSourceContextMenu;
+        private System.Windows.Forms.Button btnUp2Top;
+        private System.Windows.Forms.Button btnDown2Bottom;
     }
 }

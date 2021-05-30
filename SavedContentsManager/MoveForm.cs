@@ -387,7 +387,8 @@ namespace SavedContentsManager
                 DirectoryInfo xx = x as DirectoryInfo;
                 DirectoryInfo yy = y as DirectoryInfo;
 
-                return xx.Name.CompareTo(yy.Name);
+                //return xx.Name.CompareTo(yy.Name);
+                return xx.LastWriteTime.CompareTo(yy.LastWriteTime);
             });
 
             listSourceDetail.BeginUpdate();
@@ -1589,6 +1590,46 @@ namespace SavedContentsManager
                 listSourceContextMenu.Items.Add(stripItem);
             }
 
+        }
+
+        private void btnUp2Top_Click(object sender, EventArgs e)
+        {
+            if (listSourceDetail.SelectedIndices.Count == 0)
+                return;
+
+            int idx = listSourceDetail.SelectedIndices[0];
+            if (idx <= 0)
+                return;
+
+            ListViewItem item = listSourceDetail.SelectedItems[0];
+            listSourceDetail.Items.RemoveAt(idx);
+            idx = 0;
+            listSourceDetail.Items.Insert(idx, item);
+            listSourceDetail.SelectedIndices.Add(idx);
+            listSourceDetail.TopItem = listSourceDetail.SelectedItems[0];
+            listSourceDetail.SelectedItems[0].Focused = true;
+
+            listTargetTodo_Init();
+        }
+
+        private void btnDown2Bottom_Click(object sender, EventArgs e)
+        {
+            if (listSourceDetail.SelectedIndices.Count == 0)
+                return;
+
+            int idx = listSourceDetail.SelectedIndices[0];
+            if ((idx + 1) >= listSourceDetail.Items.Count)
+                return;
+
+            ListViewItem item = listSourceDetail.SelectedItems[0];
+            listSourceDetail.Items.RemoveAt(idx);
+            listSourceDetail.Items.Add(item);
+            listSourceDetail.SelectedIndices.Add(idx);
+
+            listSourceDetail.TopItem = item;
+            listSourceDetail.SelectedItems[0].Focused = true;
+
+            listTargetTodo_Init();
         }
     }
 }
